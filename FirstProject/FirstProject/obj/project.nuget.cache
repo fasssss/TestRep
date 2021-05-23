@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "cyxCdXHs1apogv+oYGC549WYg6s1NkNSInUdQDHezn4odPprziQ7OoJ7etUXJ4SewlRKiaOBQMsfrYCOjJpIBw==",
+  "dgSpecHash": "hGdSBcQrlJ+ONqoJCnKQytFFTMIxldBIzLf1LTGGDn/ank2ZeNFe/7WznQo9Ulv1SlYTpwW24sJ1k5/zVofRkQ==",
   "success": true,
-  "projectFilePath": "C:\\ITechArt\\FirstProject\\FirstProject\\FirstProject.csproj",
+  "projectFilePath": "C:\\ITechArtGit\\TestRep\\FirstProject\\FirstProject\\FirstProject.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\JustRetard\\.nuget\\packages\\azure.core\\1.6.0\\azure.core.1.6.0.nupkg.sha512",
     "C:\\Users\\JustRetard\\.nuget\\packages\\azure.identity\\1.3.0\\azure.identity.1.3.0.nupkg.sha512",

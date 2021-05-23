@@ -1,0 +1,25 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject UserManager<IdentityUser> UserManager
+@inject SignInManager<IdentityUser> SignInManager
+@{
+	ViewData["Title"] = "Profile information";
+	var user = await UserManager.GetUserAsync(User);
+}
+
+<h2>Private Information</h2>
+<div class="table-bordered">
+	<table style="width:100%;">
+		<tr>
+			<th>Id</th>
+			<th>Username</th>
+			<th>Email</th>
+			<th>Phone number</th>
+		</tr>
+		<tr>
+			<td>@(user.Id)</td>
+			<td>@(user.UserName)</td>
+			<td>@(user.Email)</td>
+			<td>@(user.PhoneNumber)</td>
+		</tr>
+	</table>
+</div>

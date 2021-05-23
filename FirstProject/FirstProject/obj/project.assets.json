@@ -8441,11 +8441,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\ITechArt\\FirstProject\\FirstProject\\FirstProject.csproj",
+      "projectUniqueName": "C:\\ITechArtGit\\TestRep\\FirstProject\\FirstProject\\FirstProject.csproj",
       "projectName": "FirstProject",
-      "projectPath": "C:\\ITechArt\\FirstProject\\FirstProject\\FirstProject.csproj",
+      "projectPath": "C:\\ITechArtGit\\TestRep\\FirstProject\\FirstProject\\FirstProject.csproj",
       "packagesPath": "C:\\Users\\JustRetard\\.nuget\\packages\\",
-      "outputPath": "C:\\ITechArt\\FirstProject\\FirstProject\\obj\\",
+      "outputPath": "C:\\ITechArtGit\\TestRep\\FirstProject\\FirstProject\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
