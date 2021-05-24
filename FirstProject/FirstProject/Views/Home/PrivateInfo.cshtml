@@ -1,25 +1,77 @@
 ﻿@using Microsoft.AspNetCore.Identity
+@using System.Security.Claims
 @inject UserManager<IdentityUser> UserManager
 @inject SignInManager<IdentityUser> SignInManager
 @{
 	ViewData["Title"] = "Profile information";
 	var user = await UserManager.GetUserAsync(User);
+	var claims = User.Claims;
+	IList<UserLoginInfo> CurrentLogins = new List<UserLoginInfo>();
+	if (user != null)
+	{
+		CurrentLogins = await UserManager.GetLoginsAsync(user);
+	}
 }
 
 <h2>Private Information</h2>
+<hr>
+<div>
+	<h3>External login providers</h3>
+	<ul style="list-style-type:circle;">
+		@if (CurrentLogins.Count == 0)
+		{
+			<li style="font-style:italic">NONE</li>
+		}
+		@foreach (var providers in CurrentLogins)
+		{
+			<li>@(providers.ProviderDisplayName)</li>
+		}
+	</ul>
+</div>
 <div class="table-bordered">
 	<table style="width:100%;">
 		<tr>
-			<th>Id</th>
+			<th>Authenticated User</th>
 			<th>Username</th>
 			<th>Email</th>
 			<th>Phone number</th>
 		</tr>
 		<tr>
-			<td>@(user.Id)</td>
-			<td>@(user.UserName)</td>
-			<td>@(user.Email)</td>
-			<td>@(user.PhoneNumber)</td>
+			<td>@(User.Identity.IsAuthenticated ? "Authenticated" : "Not Authenticated")</td>
+			@if (user != null)
+			{
+				<td>@(user.UserName)</td>
+				<td>@(user.Email)</td>
+				<td>@(user.PhoneNumber)</td>
+			}
+			else
+			{
+				<td>-</td>
+				<td>-</td>
+				<td>-</td>
+			}
 		</tr>
+	</table>
+</div>
+
+<h3>Claims</h3>
+<div class="table-bordered">
+	<table style="width:100%;">
+		<tr>
+			<th>Subject</th>
+			<th>Issuer</th>
+			<th>Type</th>
+			<th>Value</th>
+		</tr>
+		@foreach (var providers in claims)
+		{
+			<tr>
+				<td>@(providers.Subject.Name)</td>
+				<td>@(providers.Issuer)</td>
+				<td>@(providers.Type.ToString().Substring(providers.Type.ToString().LastIndexOfAny(new char[] { '/', '.' }) + 1))</td>
+				<td>@(providers.Value)</td>
+				@*<td>@(providers.ToString().Substring(providers.ToString().LastIndexOf(':') + 1))</td>*@
+			</tr>
+		}
 	</table>
 </div>

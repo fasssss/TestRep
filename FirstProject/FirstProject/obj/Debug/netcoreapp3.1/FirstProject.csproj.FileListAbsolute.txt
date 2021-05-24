@@ -379,3 +379,5 @@ C:\ITechArtGit\TestRep\FirstProject\FirstProject\obj\Debug\netcoreapp3.1\FirstPr
 C:\ITechArtGit\TestRep\FirstProject\FirstProject\obj\Debug\netcoreapp3.1\FirstProject.dll
 C:\ITechArtGit\TestRep\FirstProject\FirstProject\obj\Debug\netcoreapp3.1\FirstProject.pdb
 C:\ITechArtGit\TestRep\FirstProject\FirstProject\obj\Debug\netcoreapp3.1\FirstProject.genruntimeconfig.cache
+C:\ITechArtGit\TestRep\FirstProject\FirstProject\obj\Debug\netcoreapp3.1\Razor\Areas\Identity\Pages\Account\ExternalLogin.cshtml.g.cs
+C:\ITechArtGit\TestRep\FirstProject\FirstProject\obj\Debug\netcoreapp3.1\Razor\Areas\Identity\Pages\Account\Manage\ExternalLogins.cshtml.g.cs
