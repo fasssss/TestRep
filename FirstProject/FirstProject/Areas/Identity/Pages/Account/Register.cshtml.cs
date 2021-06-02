@@ -13,23 +13,29 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using FirstProject.Models;
+using FirstProject.Data;
+using System.Security.Claims;
 
 namespace FirstProject.Areas.Identity.Pages.Account
 {
     [AllowAnonymous]
     public class RegisterModel : PageModel
     {
-        private readonly SignInManager<IdentityUser> _signInManager;
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly SignInManager<ExtendedUserModel> _signInManager;
+        private readonly UserManager<ExtendedUserModel> _userManager;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
+        private readonly FirstProjectContext _context;
 
         public RegisterModel(
-            UserManager<IdentityUser> userManager,
-            SignInManager<IdentityUser> signInManager,
+            UserManager<ExtendedUserModel> userManager,
+            SignInManager<ExtendedUserModel> signInManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender)
+            IEmailSender emailSender,
+            FirstProjectContext context)
         {
+            _context = context;
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
@@ -78,8 +84,19 @@ namespace FirstProject.Areas.Identity.Pages.Account
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
-                var user = new IdentityUser { UserName = Input.UserName, Email = Input.Email };
-                var result = await _userManager.CreateAsync(user, Input.Password);
+                var user = new ExtendedUserModel { UserName = Input.UserName, Email = Input.Email };
+				var result = await _userManager.CreateAsync(user, Input.Password);
+                var locales = _context.Locales.ToList();
+                foreach (var locale in locales)
+                {
+                    if (locale.IsDefault)
+                    {
+                        user.LocaleID = locale.ID;
+                    }
+                }
+
+                _ = await _userManager.AddClaimAsync(user, new Claim("CultureID", user.LocaleID.ToString()));
+                _ = await _userManager.UpdateAsync(user);
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User created a new account with password.");

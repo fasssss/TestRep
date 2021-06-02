@@ -1,0 +1,18 @@
+﻿@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer localizer
+@inject FirstProject.Data.FirstProjectContext context
+
+@{
+	var culture = Context.Features
+		.Get<Microsoft.AspNetCore.Localization.IRequestCultureFeature>();
+	var locales = context.Locales.ToList<LocaleModel>().Select(x => x.ID).ToList();
+	var cultureList = context.Locales.ToList<LocaleModel>().Where(x => x.Enabled == true)
+		.Select(x => new SelectListItem { Value = x.ID.ToString(), Text = x.Name });
+}
+
+<div class="text-right">
+	<form asp-action="Culture" asp-controller="Home" method="post">
+		<select name="culture" asp-for="@culture.RequestCulture.UICulture.DisplayName" asp-items="cultureList" oninput="this.form.submit();">
+			<option hidden="hidden" selected="selected" disabled="disabled">@localizer["Language"]</option>
+		</select>
+	</form>
+</div>

@@ -307,6 +307,17 @@
         "runtime": {
           "FirstProject.dll": {}
         },
+        "resources": {
+          "ru/FirstProject.resources.dll": {
+            "locale": "ru"
+          },
+          "en/FirstProject.resources.dll": {
+            "locale": "en"
+          },
+          "es/FirstProject.resources.dll": {
+            "locale": "es"
+          }
+        },
         "compile": {
           "FirstProject.dll": {}
         }

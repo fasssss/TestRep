@@ -13,23 +13,28 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using FirstProject.Models;
+using FirstProject.Data;
 
 namespace FirstProject.Areas.Identity.Pages.Account
 {
     [AllowAnonymous]
     public class ExternalLoginModel : PageModel
     {
-        private readonly SignInManager<IdentityUser> _signInManager;
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly SignInManager<ExtendedUserModel> _signInManager;
+        private readonly UserManager<ExtendedUserModel> _userManager;
         private readonly IEmailSender _emailSender;
         private readonly ILogger<ExternalLoginModel> _logger;
+        private readonly FirstProjectContext _context;
 
         public ExternalLoginModel(
-            SignInManager<IdentityUser> signInManager,
-            UserManager<IdentityUser> userManager,
+            SignInManager<ExtendedUserModel> signInManager,
+            UserManager<ExtendedUserModel> userManager,
             ILogger<ExternalLoginModel> logger,
-            IEmailSender emailSender)
+            IEmailSender emailSender,
+            FirstProjectContext context)
         {
+            _context = context;
             _signInManager = signInManager;
             _userManager = userManager;
             _logger = logger;
@@ -121,11 +126,21 @@ namespace FirstProject.Areas.Identity.Pages.Account
 
             if (ModelState.IsValid)
             {
-                var user = new IdentityUser { UserName = Input.Email, Email = Input.Email };
-
+                var user = new ExtendedUserModel { UserName = Input.Email, Email = Input.Email };
                 var result = await _userManager.CreateAsync(user);
                 if (result.Succeeded)
                 {
+                    var locales = _context.Locales.ToList();
+                    foreach (var locale in locales)
+                    {
+                        if (locale.IsDefault)
+                        {
+                            user.LocaleID = locale.ID;
+                        }
+                    }
+
+                    _ = await _userManager.AddClaimAsync(user, new Claim("CultureID", user.LocaleID.ToString()));
+                    _ = await _userManager.UpdateAsync(user);
                     result = await _userManager.AddLoginAsync(user, info);
                     if (result.Succeeded)
                     {
