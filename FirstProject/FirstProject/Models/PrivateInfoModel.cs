@@ -3,23 +3,24 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FirstProject.Models;
 
 namespace FirstProject.Models
 {
 	public class PrivateInfoModel
 	{
-		public IList<UserLoginInfo> currentLogins { get; set; }
-		public IdentityUser user { get; }
-		public List<OutputFormatClaims> claims { get; set; }
+		public IList<UserLoginInfo> CurrentLogins { get; set; }
+		public ExtendedUserModel User { get; }
+		public List<OutputFormatClaims> Claims { get; set; }
 		public bool IsAuthenticated { get; set; }
-		public PrivateInfoModel(IdentityUser user = null) : this()
+		public PrivateInfoModel(ExtendedUserModel user = null) : this()
 		{
-			this.user = user;
+			this.User = user;
 		}
 		public PrivateInfoModel()
 		{
-			currentLogins = new List<UserLoginInfo>();
-			claims = new List<OutputFormatClaims>();
+			CurrentLogins = new List<UserLoginInfo>();
+			Claims = new List<OutputFormatClaims>();
 		}
 		public class OutputFormatClaims
 		{

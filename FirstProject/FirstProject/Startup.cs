@@ -1,4 +1,5 @@
 using FirstProject.Data;
+using FirstProject.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -18,6 +19,10 @@ using Microsoft.Identity.Web.UI;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.MicrosoftAccount;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.Extensions.Options;
+using System.Globalization;
+using Microsoft.AspNetCore.Localization;
+using Microsoft.AspNetCore.Mvc.Razor;
 
 namespace FirstProject
 {
@@ -33,11 +38,9 @@ namespace FirstProject
 		// This method gets called by the runtime. Use this method to add services to the container.
 		public void ConfigureServices(IServiceCollection services)
 		{
-			services.Configure<ForwardedHeadersOptions>(options =>
-			{
-				options.ForwardedHeaders =
-					ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
-			});
+			services.AddLocalization(options => options.ResourcesPath = "Resources");
+			services.AddMvc()
+				.AddViewLocalization(LanguageViewLocationExpanderFormat.Suffix);
 
 			services.AddRazorPages();
 			services.AddAuthentication().AddMicrosoftAccount(microsoftOptions =>
@@ -49,7 +52,7 @@ namespace FirstProject
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-		public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+		public void Configure(IApplicationBuilder app, IWebHostEnvironment env, FirstProjectContext context)
 		{
 			if (env.IsDevelopment())
 			{
@@ -71,6 +74,10 @@ namespace FirstProject
 
 			app.UseAuthentication();
 			app.UseAuthorization();
+
+			app.UseRequestLocalization(app.ApplicationServices
+				.GetRequiredService<IOptions<RequestLocalizationOptions>>()
+				.Value);
 
 			app.UseEndpoints(endpoints =>
 			{

@@ -11,20 +11,27 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using FirstProject.Models;
+using FirstProject.Data;
+using Microsoft.AspNetCore.Localization;
+using Microsoft.AspNetCore.Http;
 
 namespace FirstProject.Areas.Identity.Pages.Account
 {
     [AllowAnonymous]
     public class LoginModel : PageModel
     {
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly UserManager<ExtendedUserModel> _userManager;
+        private readonly SignInManager<ExtendedUserModel> _signInManager;
         private readonly ILogger<LoginModel> _logger;
+        private readonly FirstProjectContext _context;
 
-        public LoginModel(SignInManager<IdentityUser> signInManager, 
+        public LoginModel(SignInManager<ExtendedUserModel> signInManager, 
             ILogger<LoginModel> logger,
-            UserManager<IdentityUser> userManager)
+            UserManager<ExtendedUserModel> userManager,
+            FirstProjectContext context)
         {
+            _context = context;
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
@@ -43,15 +50,14 @@ namespace FirstProject.Areas.Identity.Pages.Account
         public class InputModel
         {
             [Required]
-            [EmailAddress]
-            public string Email { get; set; }
+            public string UserName { get; set; }
 
             [Required]
             [DataType(DataType.Password)]
             public string Password { get; set; }
 
-            [Display(Name = "Remember me?")]
-            public bool RememberMe { get; set; }
+			[Display(Name = "Remember me?")]
+			public bool RememberMe { get; set; }
         }
 
         public async Task OnGetAsync(string returnUrl = null)
@@ -79,10 +85,17 @@ namespace FirstProject.Areas.Identity.Pages.Account
             {
                 // This doesn't count login failures towards account lockout
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-                var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+                var result = await _signInManager.PasswordSignInAsync(Input.UserName, Input.Password, Input.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
-                    _logger.LogInformation("User logged in.");
+					var user = _context.Users.ToList<ExtendedUserModel>().Where(x => x.UserName == Input.UserName).First();
+					user.LocaleModel = await _context.Locales.FindAsync(user?.LocaleID);
+					Response.Cookies.Append(
+						CookieRequestCultureProvider.DefaultCookieName,
+						CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(user?.LocaleModel?.LocaleCode)),
+						new CookieOptions { Expires = DateTimeOffset.UtcNow.AddYears(1) }
+						);
+					_logger.LogInformation("User logged in.");
                     return LocalRedirect(returnUrl);
                 }
                 if (result.RequiresTwoFactor)

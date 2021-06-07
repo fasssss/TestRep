@@ -7,16 +7,16 @@
 	ViewData["Title"] = "Profile information";
 }
 
-<h2>Private Information</h2>
+<h2>@ViewData["Private Information"]</h2>
 <hr>
 <div>
-	<h3>External login providers</h3>
+	<h3>@ViewData["External login providers"]</h3>
 	<ul style="list-style-type:circle;">
-		@if (Model.currentLogins?.Count == 0)
+		@if (Model.CurrentLogins?.Count == 0)
 		{
-			<li style="font-style:italic">NONE</li>
+			<li style="font-style:italic">@ViewData["NONE"]</li>
 		}
-		@foreach (var providers in Model.currentLogins)
+		@foreach (var providers in Model.CurrentLogins)
 		{
 		<li>@(providers.ProviderDisplayName)</li>
 		}
@@ -26,18 +26,18 @@
 <div class="table-bordered">
 	<table style="width:100%;">
 		<tr>
-			<th>Authenticated User</th>
-			<th>Username</th>
-			<th>Email</th>
-			<th>Phone number</th>
+			<th>@ViewData["Authenticated User"]</th>
+			<th>@ViewData["Username"]</th>
+			<th>@ViewData["Email"]</th>
+			<th>@ViewData["Phone number"]</th>
 		</tr>
 		<tr>
 			<td>@(Model.IsAuthenticated ? "Authenticated" : "Not Authenticated")</td>
 			@if (Model.IsAuthenticated == true)
 			{
-				<td>@(Model.user.UserName)</td>
-				<td>@(Model.user.Email)</td>
-				<td>@(Model.user.PhoneNumber)</td>
+				<td>@(Model.User.UserName)</td>
+				<td>@(Model.User.Email)</td>
+				<td>@(Model.User.PhoneNumber)</td>
 			}
 			else
 			{
@@ -49,16 +49,17 @@
 	</table>
 </div>
 
-<h3>Claims</h3>
+<h3>
+	@ViewData["Claims"]</h3>
 <div class="table-bordered">
 	<table style="width:100%;">
 		<tr>
-			<th>Subject</th>
-			<th>Issuer</th>
-			<th>Type</th>
-			<th>Value</th>
+			<th>@ViewData["Subject"]</th>
+			<th>@ViewData["Issuer"]</th>
+			<th>@ViewData["Type"]</th>
+			<th>@ViewData["Value"]</th>
 		</tr>
-		@foreach (var claim in Model.claims)
+		@foreach (var claim in Model.Claims)
 		{
 			<tr>
 				<td>@(claim.Name)</td>
