@@ -24,17 +24,41 @@ namespace FirstProject.Controllers
 		private readonly SignInManager<ExtendedUserModel> _signInManager;
 		private readonly FirstProjectContext _context;
 		private readonly IHtmlLocalizer<HomeController> _localizer;
+		private readonly RoleManager<IdentityRole> _roleManager;
+
 		public HomeController(SignInManager<ExtendedUserModel> signInManager,
 			ILogger<HomeController> logger,
 			UserManager<ExtendedUserModel> userManager,
 			FirstProjectContext context,
-			IHtmlLocalizer<HomeController> localizer)
+			IHtmlLocalizer<HomeController> localizer,
+			RoleManager<IdentityRole> roleManager)
 		{
+			_roleManager = roleManager;
 			_localizer = localizer;
 			_context = context;
 			_logger = logger;
 			_userManager = userManager;
 			_signInManager = signInManager;
+		}
+
+		public async Task<IActionResult> RoleCapabilities()
+		{
+			var user = await _userManager.GetUserAsync(User);
+			if (user != null)
+			{
+				var role = await _userManager.GetRolesAsync(user);
+				if (role.Count > 0)
+				{
+					switch (role.First<string>())
+					{
+						case "Administrator": return View("Administrator");
+						case "Authority": return View("Authority");
+						case "LeadManager": return View("LeadManager");
+						case "RepresentativeAuthority": return View("RepresentativeAuthority");
+					}
+				}
+			}
+			return View("Guest");
 		}
 
 		public IActionResult Index()
