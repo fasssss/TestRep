@@ -51,7 +51,10 @@ namespace FirstProject.Controllers
 				{
 					switch (role.First<string>())
 					{
-						case "Administrator": return View("Administrator");
+						case "Administrator":
+							{
+								return View("Administrator", new AdministratorViewModel(_userManager, _roleManager));
+							}
 						case "Authority": return View("Authority");
 						case "LeadManager": return View("LeadManager");
 						case "RepresentativeAuthority": return View("RepresentativeAuthority");
@@ -59,6 +62,36 @@ namespace FirstProject.Controllers
 				}
 			}
 			return View("Guest");
+		}
+
+		[HttpPost]
+		public async Task<IActionResult> AdministratorsDeleteButton(string userName)
+		{
+			var user = await _userManager.FindByNameAsync(userName);
+			if (user != null)
+			{
+				_ = await _userManager.DeleteAsync(user);
+			}
+			return RedirectToAction("RoleCapabilities");
+		}
+
+		[HttpPost]
+		public async Task<IActionResult> AdministratorsModeration(string userName, string role, string action = "Role Update")
+		{
+			var user = await _userManager.FindByNameAsync(userName);
+			if (user != null)
+			{
+				if (action == "Delete")
+				{
+					_ = await _userManager.DeleteAsync(user);
+					return RedirectToAction("RoleCapabilities");
+				}
+
+				var currentRole = await _userManager.GetRolesAsync(user);
+				_ = await _userManager.RemoveFromRolesAsync(user, currentRole);
+				_ = await _userManager.AddToRoleAsync(user, role);
+			}
+			return RedirectToAction("RoleCapabilities");
 		}
 
 		public IActionResult Index()
