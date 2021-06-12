@@ -14,5 +14,7 @@ namespace FirstProject.Models
 
 		[ForeignKey("LocaleID")]
 		public LocaleModel LocaleModel { get; set; }
+
+		public ICollection<FileModel> FileModels { get; set; }
 	}
 }

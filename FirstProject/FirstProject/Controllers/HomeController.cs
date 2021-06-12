@@ -14,6 +14,8 @@ using FirstProject.Data;
 using Microsoft.AspNetCore.Mvc.Localization;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Http;
+using System.IO;
+using Microsoft.AspNetCore.Hosting;
 
 namespace FirstProject.Controllers
 {
@@ -25,13 +27,15 @@ namespace FirstProject.Controllers
 		private readonly FirstProjectContext _context;
 		private readonly IHtmlLocalizer<HomeController> _localizer;
 		private readonly RoleManager<IdentityRole> _roleManager;
+		private readonly IWebHostEnvironment _appEnvironment;
 
 		public HomeController(SignInManager<ExtendedUserModel> signInManager,
 			ILogger<HomeController> logger,
 			UserManager<ExtendedUserModel> userManager,
 			FirstProjectContext context,
 			IHtmlLocalizer<HomeController> localizer,
-			RoleManager<IdentityRole> roleManager)
+			RoleManager<IdentityRole> roleManager,
+			IWebHostEnvironment appEnvironment)
 		{
 			_roleManager = roleManager;
 			_localizer = localizer;
@@ -39,6 +43,7 @@ namespace FirstProject.Controllers
 			_logger = logger;
 			_userManager = userManager;
 			_signInManager = signInManager;
+			_appEnvironment = appEnvironment;
 		}
 
 		public async Task<IActionResult> RoleCapabilities()
@@ -53,26 +58,24 @@ namespace FirstProject.Controllers
 					{
 						case "Administrator":
 							{
-								return View("Administrator", new AdministratorViewModel(_userManager, _roleManager));
+								return View("Administrator", new UserAdministrationViewModel(_userManager, _roleManager));
 							}
-						case "Authority": return View("Authority");
-						case "LeadManager": return View("LeadManager");
-						case "RepresentativeAuthority": return View("RepresentativeAuthority");
+						case "Authority":
+							{
+								return View("Authority", new UserAdministrationViewModel(_userManager, _roleManager));
+							}
+						case "LeadManager":
+							{
+								return View("LeadManager", new UserAdministrationViewModel(_userManager, _roleManager));
+							}
+						case "RepresentativeAuthority":
+							{
+								return View("RepresentativeAuthority", new UserAdministrationViewModel(_userManager, _roleManager));
+							}
 					}
 				}
 			}
 			return View("Guest");
-		}
-
-		[HttpPost]
-		public async Task<IActionResult> AdministratorsDeleteButton(string userName)
-		{
-			var user = await _userManager.FindByNameAsync(userName);
-			if (user != null)
-			{
-				_ = await _userManager.DeleteAsync(user);
-			}
-			return RedirectToAction("RoleCapabilities");
 		}
 
 		[HttpPost]
@@ -89,9 +92,83 @@ namespace FirstProject.Controllers
 
 				var currentRole = await _userManager.GetRolesAsync(user);
 				_ = await _userManager.RemoveFromRolesAsync(user, currentRole);
-				_ = await _userManager.AddToRoleAsync(user, role);
+				if (role != "Guest")
+				{
+					_ = await _userManager.AddToRoleAsync(user, role);
+				}
 			}
 			return RedirectToAction("RoleCapabilities");
+		}
+
+		[HttpPost]
+		public async Task<IActionResult> RepresentativeAuthorityModeration(string userName)
+		{
+			var user = await _userManager.FindByNameAsync(userName);
+			if (user != null)
+			{
+				await _signInManager.RefreshSignInAsync(user);
+			}
+			return RedirectToAction("RoleCapabilities");
+		}
+		[HttpPost]
+		public async Task<IActionResult> AuthorityModeration(string userName, string action)
+		{
+			var userRepresentativeAuthority = await _userManager.FindByNameAsync(userName);
+			var userAuthority = await _userManager.GetUserAsync(User);
+			if (userRepresentativeAuthority != null && userAuthority != null)
+			{
+				if (action == "Rely")
+				{
+					await _userManager.AddClaimAsync(userAuthority, new Claim("RepresentativeAuthority", userRepresentativeAuthority.UserName));
+					await _userManager.AddClaimAsync(userRepresentativeAuthority, new Claim("Authority", userAuthority.UserName));
+				}
+
+				if (action == "StopRely")
+				{
+					await _userManager.RemoveClaimAsync(userAuthority, new Claim("RepresentativeAuthority", userRepresentativeAuthority.UserName));
+					await _userManager.RemoveClaimAsync(userRepresentativeAuthority, new Claim("Authority", userAuthority.UserName));
+				}
+				await _signInManager.RefreshSignInAsync(userAuthority);
+			}
+			return RedirectToAction("RoleCapabilities");
+		}
+
+		[HttpPost]
+		public async Task<IActionResult> LeadManagersModeration(string userName, string role, string authority)
+		{
+			var user = await _userManager.FindByNameAsync(userName);
+			if (user != null)
+			{
+				if (role == "Authority" || role == "RepresentativeAuthority")
+				{
+					var currentRole = await _userManager.GetRolesAsync(user);
+					_ = await _userManager.RemoveFromRolesAsync(user, currentRole);
+					_ = await _userManager.AddToRoleAsync(user, role);
+				}
+			}
+			return RedirectToAction("RoleCapabilities");
+		}
+
+		[HttpPost]
+		public async Task<IActionResult> AddFile(IFormFile uploadedFile)
+		{
+			var user = await _userManager.GetUserAsync(User);
+			if (user != null)
+			{
+				if (uploadedFile != null)
+				{
+					string path = "/UserFiles/" + uploadedFile.FileName;
+					using (var fileStream = new FileStream(_appEnvironment.WebRootPath + path, FileMode.Create))
+					{
+						await uploadedFile.CopyToAsync(fileStream);
+					}
+					FileModel file = new FileModel { Name = uploadedFile.FileName, Path = path, UserID = user.Id};
+					_context.Files.Add(file);
+					_context.SaveChanges();
+				}
+			}
+
+			return RedirectToAction("Index");
 		}
 
 		public IActionResult Index()

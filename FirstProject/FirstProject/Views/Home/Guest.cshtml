@@ -1,1 +1,7 @@
 ﻿<h1 class="font-weight-bold">Guest page</h1>
+<h3>Uploading Files</h3>
+<form asp-action="AddFile" asp-controller="Home" method="post" enctype="multipart/form-data">
+	<input type="file" name="uploadedFile" />
+	<br>
+	<input type="submit" value="Upload" />
+</form>

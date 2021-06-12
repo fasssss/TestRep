@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace FirstProject.Models
 {
-	public class AdministratorViewModel
+	public class UserAdministrationViewModel
 	{
 		private readonly UserManager<ExtendedUserModel> _userManager;
 		private readonly RoleManager<IdentityRole> _roleManager;
-		public AdministratorViewModel(UserManager<ExtendedUserModel> userManager)
+		public UserAdministrationViewModel(UserManager<ExtendedUserModel> userManager)
 		{
 			_userManager = userManager;
 			var userList = userManager.Users.ToList();
@@ -23,12 +23,12 @@ namespace FirstProject.Models
 			}
 		}
 
-		public AdministratorViewModel(UserManager<ExtendedUserModel> userManager,
+		public UserAdministrationViewModel(UserManager<ExtendedUserModel> userManager,
 			RoleManager<IdentityRole> roleManager) : this(userManager)
 		{
 			_roleManager = roleManager;
 			RoleList = roleManager.Roles.ToList();
-			RoleList.Remove(RoleList.Find(x => x.Name == "Administrator"));
+			RoleList.Add(new IdentityRole("Guest"));
 		}
 
 		private async Task<IList<string>> GetRole(ExtendedUserModel user)

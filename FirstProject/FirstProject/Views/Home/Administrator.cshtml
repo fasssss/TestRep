@@ -1,4 +1,7 @@
-﻿@model AdministratorViewModel
+﻿@model UserAdministrationViewModel
+@{
+	Model.RoleList.Remove(Model.RoleList.Find(x => x.Name == "Administrator"));
+}
 <h1 class="font-weight-bold">Administrator page</h1>
 <h3>Users</h3>
 <ol>
@@ -17,8 +20,8 @@
 		{
 			<li class="border m-2 p-2">
 				<div class="nav float-right">
-					<form method="post" asp-controller="Home" asp-action="AdministratorsModeration">
-						<input name="userName" value="@user.UserName" hidden="hidden" />
+					<form method="post" asp-controller="Home" asp-action="AdministratorsModeration" asp-route-userName="@user.UserName">
+						@*<input name="userName" value="@user.UserName" hidden="hidden" />*@
 						<select name="role" asp-items="@(new SelectList(Model.RoleList))" oninput="this.form.submit();">
 							<option hidden="hidden" selected="selected" disabled="disabled">Change Role?</option>
 						</select>

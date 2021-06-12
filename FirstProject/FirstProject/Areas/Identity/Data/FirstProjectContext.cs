@@ -16,6 +16,7 @@ namespace FirstProject.Data
         {
         }
 
+        public DbSet<FileModel> Files { get; set; }
         public DbSet<LocaleModel> Locales { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {

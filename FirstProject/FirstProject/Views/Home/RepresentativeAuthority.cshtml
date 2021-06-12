@@ -1,1 +1,21 @@
-﻿
+﻿@model UserAdministrationViewModel
+@{
+	var trustedAuthorities = User.Claims.ToList().FindAll(x => x.Type == "Authority");
+}
+<h1 class="font-weight-bold text-center">Representative Authority page</h1>
+<br>
+<form method="post" asp-controller="Home" asp-action="RepresentativeAuthorityModeration" asp-route-userName="@User.Identity.Name">
+	<h3>Trusted Owners<span><button class="bg-white float-right rounded-circle" type="submit">↻</button></span></h3>
+</form>
+<br>
+<ol>
+	@foreach (var user in Model.UserList)
+	{
+		if (user.Role == "Authority" && trustedAuthorities.Any(x => x.Value == user.UserName))
+		{
+			<li class="border m-2 p-2">
+				@user.ToString()
+			</li>
+		}
+	}
+</ol>

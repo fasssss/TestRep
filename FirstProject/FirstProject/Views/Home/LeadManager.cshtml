@@ -1,1 +1,32 @@
-﻿<h1 class="font-weight-bold">LeadManager page</h1>
+﻿@model UserAdministrationViewModel
+@{
+	Model.RoleList.Remove(Model.RoleList.Find(x => x.Name == "Administrator"));
+	Model.RoleList.Remove(Model.RoleList.Find(x => x.Name == "LeadManager"));
+	Model.RoleList.Remove(Model.RoleList.Find(x => x.Name == "Guest"));
+	var authorities = from authority in Model.UserList where authority.Role == "Authority" select authority.UserName;
+}
+<h1 class="font-weight-bold text-center">LeadManager page</h1>
+<br>
+<h3>Users</h3>
+<ol>
+	@foreach (var user in Model.UserList)
+	{
+		if (user.Role == "RepresentativeAuthority" || user.Role == "Authority")
+		{
+			<li class="border m-2 p-2">
+				<div class="nav float-right">
+					<form method="post" asp-controller="Home" asp-action="LeadManagersModeration" asp-route-userName="@user.UserName">
+						<select name="role" asp-items="@(new SelectList(Model.RoleList))" oninput="this.form.submit();">
+							<option hidden="hidden" selected="selected" disabled="disabled">Change Role?</option>
+						</select>
+						@*<select name="authority" asp-items="@(new SelectList(authorities))" oninput="this.form.submit();">
+							<option hidden="hidden" selected="selected" disabled="disabled">Add or Remove Authority?</option>
+						</select>*@
+					</form>
+				</div>
+				@user.ToString()
+			</li>
+		}
+	}
+</ol>
+<h3>Voutes</h3>

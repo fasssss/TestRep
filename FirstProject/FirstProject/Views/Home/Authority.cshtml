@@ -1,1 +1,34 @@
-﻿<h1 class="font-weight-bold">Authority page</h1>
+﻿@model UserAdministrationViewModel
+@{
+	var representativeAuthorities = User.Claims.Where(x => x.Type == "RepresentativeAuthority").Select(x => x.Value).ToList();
+}
+<h1 class="font-weight-bold">Authority page</h1>
+<br>
+<h3>Representative Authorities</h3>
+<br>
+<ol>
+	@foreach (var user in Model.UserList)
+	{
+		if (user.Role == "RepresentativeAuthority")
+		{
+			if (representativeAuthorities.Contains(user.UserName))
+			{
+				<li class="border alert-success m-2 p-2">
+					<form method="post" asp-controller="Home" asp-action="AuthorityModeration" asp-route-userName="@user.UserName">
+						<button type="submit" name="action" value="StopRely" class="float-right">GET HIS POWER</button>
+					</form>
+					@user.ToString()
+				</li>
+			}
+			else
+			{
+				<li class="border m-2 p-2">
+					<form method="post" asp-controller="Home" asp-action="AuthorityModeration" asp-route-userName="@user.UserName">
+						<button type="submit" name="action" value="Rely" class="float-right">GIVE HIM POWER</button>
+					</form>
+					@user.ToString()
+				</li>
+			}
+		}
+	}
+</ol>
