@@ -1,6 +1,10 @@
 ﻿<h1 class="font-weight-bold">Guest page</h1>
+@if ((string)TempData["request"] == "already under consideration")
+{
+	<h4 class="alert-success text-center p-2" style="border-radius: 0.5em">Your Request Already Under Consideration</h4>
+}
 <h3>Uploading Files</h3>
-<form asp-action="AddFile" asp-controller="Home" method="post" enctype="multipart/form-data">
+<form asp-action="AddFile" asp-controller="Home" asp-route-path="/UserFiles/" method="post" enctype="multipart/form-data">
 	<input type="file" name="uploadedFile" />
 	<br>
 	<input type="submit" value="Upload" />

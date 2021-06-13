@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Http;
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.StaticFiles;
 
 namespace FirstProject.Controllers
 {
@@ -66,6 +67,7 @@ namespace FirstProject.Controllers
 							}
 						case "LeadManager":
 							{
+								TempData["Files"] = _context.Files.ToList().Select(x => x).ToList();
 								return View("LeadManager", new UserAdministrationViewModel(_userManager, _roleManager));
 							}
 						case "RepresentativeAuthority":
@@ -73,6 +75,14 @@ namespace FirstProject.Controllers
 								return View("RepresentativeAuthority", new UserAdministrationViewModel(_userManager, _roleManager));
 							}
 					}
+				}
+				if (_context.Files.ToList().Find(x => x.UserID == user.Id) != null)
+				{
+					TempData["request"] = "already under consideration";
+				}
+				else
+				{
+					TempData["request"] = "new request";
 				}
 			}
 			return View("Guest");
@@ -150,25 +160,53 @@ namespace FirstProject.Controllers
 		}
 
 		[HttpPost]
-		public async Task<IActionResult> AddFile(IFormFile uploadedFile)
+		public async Task<IActionResult> AddFile(IFormFile uploadedFile, string path)
 		{
 			var user = await _userManager.GetUserAsync(User);
 			if (user != null)
 			{
 				if (uploadedFile != null)
 				{
-					string path = "/UserFiles/" + uploadedFile.FileName;
-					using (var fileStream = new FileStream(_appEnvironment.WebRootPath + path, FileMode.Create))
+					path =path + User.Identity.Name + "/";
+					if (!Directory.Exists(_appEnvironment.WebRootPath + path + User.Identity.Name + "/"))
 					{
-						await uploadedFile.CopyToAsync(fileStream);
+						Directory.CreateDirectory(_appEnvironment.WebRootPath + path + User.Identity.Name + "/");
 					}
+					path += uploadedFile.FileName;
 					FileModel file = new FileModel { Name = uploadedFile.FileName, Path = path, UserID = user.Id};
 					_context.Files.Add(file);
 					_context.SaveChanges();
+
+					//int dotPosition = _context.Files.ToList().Last().Name.LastIndexOf('.');
+					//_context.Files.ToList().Last().Name = _context.Files.ToList().Last().Name
+					//	.Insert(dotPosition, _context.Files.ToList().Last().Id.ToString());
+					//dotPosition = _context.Files.ToList().Last().Path.LastIndexOf('.');                                       //For file uniqueness
+					//_context.Files.ToList().Last().Path = _context.Files.ToList().Last().Path
+					//	.Insert(dotPosition, _context.Files.ToList().Last().Id.ToString());
+					//_context.SaveChanges();
+
+					using (var fileStream = new FileStream(_appEnvironment.WebRootPath + _context.Files.ToList().Last().Path, FileMode.Create))
+					{
+						await uploadedFile.CopyToAsync(fileStream);
+					}
 				}
 			}
 
 			return RedirectToAction("Index");
+		}
+
+		[HttpPost]
+		public IActionResult InspectingUserFiles(string fileName, string path)
+		{
+			var requestedFile = _context.Files.Where(x => x.Name == fileName && x.Path == (path + fileName)).Select(x => x).ToList();
+			string filePath = _appEnvironment.WebRootPath + requestedFile.First().Path;
+			string contentType;
+			if (new FileExtensionContentTypeProvider().TryGetContentType(fileName, out contentType) == false)
+			{
+				throw (new Exception("File extention was not recognized"));
+			}
+
+			return PhysicalFile(filePath, contentType, fileName);
 		}
 
 		public IActionResult Index()

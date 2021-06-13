@@ -19,7 +19,7 @@ namespace FirstProject.Models
 			{
 				var role = GetRole(user).Result;
 				var date = GetDate(user).Result;
-				UserList.Add(new UserPresentation(user.ToString(), role.First().ToString(), date));
+				UserList.Add(new UserPresentation(user.ToString(), role.First().ToString(), date, user.Id));
 			}
 		}
 
@@ -61,12 +61,14 @@ namespace FirstProject.Models
 
 		public class UserPresentation
 		{
+			public string UserID { get; set; }
 			public string UserName { get; set; }
 			public string Role { get; set; }
 			public string RegistrationDate { get; set; }
 
-			public UserPresentation(string userName = "Anonom", string role = "Guest", string registrationDate = "---")
+			public UserPresentation(string userName = "Anonom", string role = "Guest", string registrationDate = "---", string userID = "_/(0-0)_/")
 			{
+				UserID = userID;
 				UserName = userName;
 				Role = role;
 				RegistrationDate = registrationDate;
