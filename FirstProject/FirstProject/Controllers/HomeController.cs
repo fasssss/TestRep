@@ -47,6 +47,11 @@ namespace FirstProject.Controllers
 			_appEnvironment = appEnvironment;
 		}
 
+		public IActionResult Polles()
+		{
+			return View();
+		}
+
 		public async Task<IActionResult> RoleCapabilities()
 		{
 			var user = await _userManager.GetUserAsync(User);
