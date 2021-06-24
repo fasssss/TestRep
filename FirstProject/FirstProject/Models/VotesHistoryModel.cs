@@ -7,16 +7,14 @@ using System.Threading.Tasks;
 
 namespace FirstProject.Models
 {
-	public class VoteModel
+	public class VotesHistoryModel
 	{
 		[Key]
 		public int Id { get; set; }
-		public System.Guid UserId { get; set; }
-		public int QuestionId { get; set; }
 		public int VoteTypeId { get; set; }
+		public int QuestionId { get; set; }
+		public int VoteSummary { get; set; }
 
-		[ForeignKey("UserId")]
-		public ExtendedUserModel ExtendedUserModel { get; set; }
 		[ForeignKey("QuestionId")]
 		public QuestionModel QuestionModel { get; set; }
 		[ForeignKey("VoteTypeId")]

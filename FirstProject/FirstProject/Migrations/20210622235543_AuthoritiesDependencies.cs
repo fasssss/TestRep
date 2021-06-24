@@ -1,15 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace FirstProject.Migrations
 {
-    public partial class localeV3 : Migration
+    public partial class AuthoritiesDependencies : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_AspNetUsers_Locales_LocaleID",
-                table: "AspNetUsers");
-
             migrationBuilder.AlterColumn<string>(
                 name: "Name",
                 table: "AspNetUserTokens",
@@ -25,13 +22,6 @@ namespace FirstProject.Migrations
                 oldClrType: typeof(string),
                 oldType: "nvarchar(128)",
                 oldMaxLength: 128);
-
-            migrationBuilder.AlterColumn<int>(
-                name: "LocaleID",
-                table: "AspNetUsers",
-                nullable: true,
-                oldClrType: typeof(int),
-                oldType: "int");
 
             migrationBuilder.AlterColumn<string>(
                 name: "ProviderKey",
@@ -49,20 +39,40 @@ namespace FirstProject.Migrations
                 oldType: "nvarchar(128)",
                 oldMaxLength: 128);
 
-            migrationBuilder.AddForeignKey(
-                name: "FK_AspNetUsers_Locales_LocaleID",
-                table: "AspNetUsers",
-                column: "LocaleID",
-                principalTable: "Locales",
-                principalColumn: "ID",
-                onDelete: ReferentialAction.Restrict);
+            migrationBuilder.CreateTable(
+                name: "AuthorityDependencies",
+                columns: table => new
+                {
+                    AuthrityId = table.Column<Guid>(nullable: false),
+                    RepresentativeAuthrityId = table.Column<Guid>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AuthorityDependencies", x => new { x.AuthrityId, x.RepresentativeAuthrityId });
+                    table.ForeignKey(
+                        name: "FK_AuthorityDependencies_AspNetUsers_AuthrityId",
+                        column: x => x.AuthrityId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_AuthorityDependencies_AspNetUsers_RepresentativeAuthrityId",
+                        column: x => x.RepresentativeAuthrityId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.NoAction);
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AuthorityDependencies_RepresentativeAuthrityId",
+                table: "AuthorityDependencies",
+                column: "RepresentativeAuthrityId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_AspNetUsers_Locales_LocaleID",
-                table: "AspNetUsers");
+            migrationBuilder.DropTable(
+                name: "AuthorityDependencies");
 
             migrationBuilder.AlterColumn<string>(
                 name: "Name",
@@ -80,14 +90,6 @@ namespace FirstProject.Migrations
                 nullable: false,
                 oldClrType: typeof(string));
 
-            migrationBuilder.AlterColumn<int>(
-                name: "LocaleID",
-                table: "AspNetUsers",
-                type: "int",
-                nullable: false,
-                oldClrType: typeof(int),
-                oldNullable: true);
-
             migrationBuilder.AlterColumn<string>(
                 name: "ProviderKey",
                 table: "AspNetUserLogins",
@@ -103,14 +105,6 @@ namespace FirstProject.Migrations
                 maxLength: 128,
                 nullable: false,
                 oldClrType: typeof(string));
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_AspNetUsers_Locales_LocaleID",
-                table: "AspNetUsers",
-                column: "LocaleID",
-                principalTable: "Locales",
-                principalColumn: "ID",
-                onDelete: ReferentialAction.Cascade);
         }
     }
 }

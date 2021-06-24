@@ -9,7 +9,7 @@ namespace FirstProject.Models
 	public class UserAdministrationViewModel
 	{
 		private readonly UserManager<ExtendedUserModel> _userManager;
-		private readonly RoleManager<IdentityRole> _roleManager;
+		private readonly RoleManager<IdentityRole<System.Guid>> _roleManager;
 		public UserAdministrationViewModel(UserManager<ExtendedUserModel> userManager)
 		{
 			_userManager = userManager;
@@ -19,16 +19,16 @@ namespace FirstProject.Models
 			{
 				var role = GetRole(user).Result;
 				var date = GetDate(user).Result;
-				UserList.Add(new UserPresentation(user.ToString(), role.First().ToString(), date, user.Id));
+				UserList.Add(new UserPresentation(user.ToString(), role.First().ToString(), date, user.Id.ToString()));
 			}
 		}
 
 		public UserAdministrationViewModel(UserManager<ExtendedUserModel> userManager,
-			RoleManager<IdentityRole> roleManager) : this(userManager)
+			RoleManager<IdentityRole<System.Guid>> roleManager) : this(userManager)
 		{
 			_roleManager = roleManager;
 			RoleList = roleManager.Roles.ToList();
-			RoleList.Add(new IdentityRole("Guest"));
+			RoleList.Add(new IdentityRole<System.Guid>("Guest"));
 		}
 
 		private async Task<IList<string>> GetRole(ExtendedUserModel user)
@@ -57,7 +57,7 @@ namespace FirstProject.Models
 		}
 
 		public List<UserPresentation> UserList { get; set; }
-		public List<IdentityRole> RoleList { get; set; }
+		public List<IdentityRole<System.Guid>> RoleList { get; set; }
 
 		public class UserPresentation
 		{

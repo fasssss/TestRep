@@ -33,7 +33,7 @@
 <ol>
 	@foreach (var user in Model.UserList)
 	{
-		if (user.Role == "Guest" && filesUserId.Contains(user.UserID))
+		if (user.Role == "Guest" && filesUserId.ToString().Contains(user.UserID))
 		{
 			<li class="border m-2 p-2">
 				<div class="nav float-right">

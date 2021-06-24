@@ -14,8 +14,9 @@
 }
 
 <ul class="navbar-nav">
-	@if (role?.Last() == "Authority" || role?.Last() == "RepresentativeAuthority")
+	@if (User.IsInRole("Authority") || User.IsInRole("RepresentativeAuthority"))
 	{
+
 		<li class="nav-item border-left">
 			<a class="nav-link text-dark font-weight-bold" asp-area="" asp-controller="Home" asp-action="Polles">@Localizer["Polles"]</a>
 		</li>

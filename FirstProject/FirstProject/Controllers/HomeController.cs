@@ -27,7 +27,7 @@ namespace FirstProject.Controllers
 		private readonly SignInManager<ExtendedUserModel> _signInManager;
 		private readonly FirstProjectContext _context;
 		private readonly IHtmlLocalizer<HomeController> _localizer;
-		private readonly RoleManager<IdentityRole> _roleManager;
+		private readonly RoleManager<IdentityRole<System.Guid>> _roleManager;
 		private readonly IWebHostEnvironment _appEnvironment;
 
 		public HomeController(SignInManager<ExtendedUserModel> signInManager,
@@ -35,7 +35,7 @@ namespace FirstProject.Controllers
 			UserManager<ExtendedUserModel> userManager,
 			FirstProjectContext context,
 			IHtmlLocalizer<HomeController> localizer,
-			RoleManager<IdentityRole> roleManager,
+			RoleManager<IdentityRole<System.Guid>> roleManager,
 			IWebHostEnvironment appEnvironment)
 		{
 			_roleManager = roleManager;
@@ -68,6 +68,12 @@ namespace FirstProject.Controllers
 							}
 						case "Authority":
 							{
+								var representativeAuthorityModel = _context.AuthorityDependencies.Where(x => x.AuthrityId == user.Id )
+									.Select(x => x.RepresentativeAuthorityModel).ToList();
+								if (representativeAuthorityModel.Count > 0)
+								{
+									TempData["AppliedRepresentativeAuthority"] = representativeAuthorityModel.Last().UserName;
+								}
 								return View("Authority", new UserAdministrationViewModel(_userManager, _roleManager));
 							}
 						case "LeadManager":
@@ -102,6 +108,9 @@ namespace FirstProject.Controllers
 				if (action == "Delete")
 				{
 					_ = await _userManager.DeleteAsync(user);
+					_context.AuthorityDependencies.Remove(_context.AuthorityDependencies
+						.ToList().Find(x => x.RepresentativeAuthrityId == user.Id));
+					_context.SaveChanges();
 					return RedirectToAction("RoleCapabilities");
 				}
 
@@ -134,14 +143,18 @@ namespace FirstProject.Controllers
 			{
 				if (action == "Rely")
 				{
-					await _userManager.AddClaimAsync(userAuthority, new Claim("RepresentativeAuthority", userRepresentativeAuthority.UserName));
-					await _userManager.AddClaimAsync(userRepresentativeAuthority, new Claim("Authority", userAuthority.UserName));
+					_context.AuthorityDependencies.Add(
+						new AuthorityDependenciesModel { RepresentativeAuthrityId = userRepresentativeAuthority.Id, AuthrityId = userAuthority.Id});
+					_context.SaveChanges();
 				}
 
 				if (action == "StopRely")
 				{
-					await _userManager.RemoveClaimAsync(userAuthority, new Claim("RepresentativeAuthority", userRepresentativeAuthority.UserName));
-					await _userManager.RemoveClaimAsync(userRepresentativeAuthority, new Claim("Authority", userAuthority.UserName));
+
+					_context.AuthorityDependencies.Remove(_context.AuthorityDependencies.Find(userAuthority.Id, userRepresentativeAuthority.Id));
+					_context.SaveChanges();
+					//await _userManager.RemoveClaimAsync(userAuthority, new Claim("RepresentativeAuthority", userRepresentativeAuthority.UserName));
+					//await _userManager.RemoveClaimAsync(userRepresentativeAuthority, new Claim("Authority", userAuthority.UserName));
 				}
 				await _signInManager.RefreshSignInAsync(userAuthority);
 			}

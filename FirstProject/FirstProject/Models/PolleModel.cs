@@ -14,8 +14,6 @@ namespace FirstProject.Models
 		public string FinalResult { get; set; }
 		[StringLength(50)]
 		public string Status { get; set; }
-		[StringLength(50)]
-		public string Author { get; set; }
 
 		ICollection<QuestionModel> QuestionModels { get; set; }
 	}

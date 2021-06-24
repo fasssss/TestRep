@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace FirstProject.Models
 {
-	public class ExtendedUserModel : IdentityUser
+	public class ExtendedUserModel : IdentityUser<System.Guid>
 	{
 		public int? LocaleID { get; set; }
 

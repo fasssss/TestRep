@@ -64,8 +64,9 @@ namespace FirstProject.Areas.Identity
 					options.Password.RequireUppercase = false;
 					options.Password.RequireLowercase = false;
 				})
-					.AddRoles<IdentityRole>()
-					.AddEntityFrameworkStores<FirstProjectContext>();
+					.AddRoles<IdentityRole<System.Guid>>()
+					.AddEntityFrameworkStores<FirstProjectContext>()
+					.AddDefaultTokenProviders();
 			});
 		}
     }

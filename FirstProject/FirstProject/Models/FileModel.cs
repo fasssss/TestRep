@@ -12,7 +12,7 @@ namespace FirstProject.Models
         public string Name { get; set; }
         public string Path { get; set; }
 
-        public string UserID { get; set; }
+        public System.Guid UserID { get; set; }
 
         [ForeignKey("UserID")]
         public ExtendedUserModel ExtendedUserModel { get; set; }

@@ -8,6 +8,12 @@
   <ItemGroup>
     <Compile Remove="Migrations\20210601080940_localeV1.cs" />
     <Compile Remove="Migrations\20210601080940_localeV1.Designer.cs" />
+    <Compile Remove="Migrations\20210620210004_ChangeIdType.cs" />
+    <Compile Remove="Migrations\20210620210004_ChangeIdType.Designer.cs" />
+    <Compile Remove="Migrations\20210622234936_AuthoritiesDependencies.cs" />
+    <Compile Remove="Migrations\20210622234936_AuthoritiesDependencies.Designer.cs" />
+    <Compile Remove="Migrations\20210622235416_AuthoritiesDependencies.cs" />
+    <Compile Remove="Migrations\20210622235416_AuthoritiesDependencies.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

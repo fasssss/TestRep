@@ -13,10 +13,7 @@ namespace FirstProject.Models
 		public int Id { get; set; }
 		public int PolleId { get; set; }
 		public string Question { get; set; }
-		public int VoutesFor { get; set; }
-		public int VotesAgainst { get; set; }
-		public int Abstained { get; set; }
-
+		public byte[] File { get; set; }
 		[ForeignKey("PolleId")]
 		public PolleModel PolleModel { get; set; }
 
