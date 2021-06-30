@@ -4,14 +4,16 @@ using FirstProject.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace FirstProject.Migrations
 {
     [DbContext(typeof(FirstProjectContext))]
-    partial class FirstProjectContextModelSnapshot : ModelSnapshot
+    [Migration("20210624170329_CorrectionsNonNullableProperties")]
+    partial class CorrectionsNonNullableProperties
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -218,6 +220,11 @@ namespace FirstProject.Migrations
 
             modelBuilder.Entity("FirstProject.Models.VoteModel", b =>
                 {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
                     b.Property<int>("QuestionId")
                         .HasColumnType("int");
 
@@ -227,7 +234,9 @@ namespace FirstProject.Migrations
                     b.Property<int>("VoteTypeId")
                         .HasColumnType("int");
 
-                    b.HasKey("QuestionId", "UserId");
+                    b.HasKey("Id");
+
+                    b.HasIndex("QuestionId");
 
                     b.HasIndex("UserId");
 

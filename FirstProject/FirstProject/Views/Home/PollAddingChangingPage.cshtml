@@ -1,0 +1,35 @@
+﻿@model PollesViewModel
+@{
+	IList<QuestionModel> questionsList = new List<QuestionModel> { new QuestionModel()};
+}
+<h1>Create or change existing poll</h1>
+@if (Model.CurrentQuestions.Count > 0)
+{
+<form method="post" asp-controller="Home" asp-action="PollSaveChanges" asp-route-pollId="@Model.PollId">
+	<ol>
+		@for (int i = 0; i < Model.CurrentQuestions.Count; i++)
+		{
+			<li class="border border-dark m-1 p-1" style="background-color:lightgray; border-radius: 0.5em">
+				<div class="btn-group-vertical m-2 p-2">
+					<input hidden="hidden" name="questionsId" value="@Model.CurrentQuestions[i].Id">
+					<textarea cols="120" rows="10" name="questionsText" value="@Model.CurrentQuestions[i].Question">@Model.CurrentQuestions[i].Question</textarea>
+					<br>
+					<a class="text-danger">Warning! Save changes before you leave eather you will lose your changes</a>
+				</div>
+			</li>
+		}
+	</ol>
+	<button class="float-right" style="border-radius: 5em" type="submit" name="action" value="change">Submit</button>
+</form>
+}
+<br>
+<br>
+<form method="post" asp-controller="Home" asp-action="PollSaveChanges" asp-route-pollId="@Model.PollId">
+	<div style="text-align: center">
+		<textarea cols="120" rows="10" name="questionsText"></textarea>
+	</div>
+	<div style="text-align: center">
+		<button class="bg-success btn-sm" name="action" value="add">Add new poll</button>
+	</div>
+</form>
+

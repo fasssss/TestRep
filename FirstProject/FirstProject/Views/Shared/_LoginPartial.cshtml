@@ -16,11 +16,18 @@
 <ul class="navbar-nav">
 	@if (User.IsInRole("Authority") || User.IsInRole("RepresentativeAuthority"))
 	{
-
 		<li class="nav-item border-left">
-			<a class="nav-link text-dark font-weight-bold" asp-area="" asp-controller="Home" asp-action="Polles">@Localizer["Polles"]</a>
+			<a class="nav-link text-dark font-weight-bold" asp-area="" asp-controller="Home" asp-action="PollesList">@Localizer["Polles List"]</a>
 		</li>
 	}
+
+	@if (User.IsInRole("LeadManager"))
+	{
+		<li class="nav-item border-left">
+			<a class="nav-link text-dark font-weight-bold" asp-area="" asp-controller="Home" asp-action="PollsManagement">@Localizer["Polles Management"]</a>
+		</li>
+	}
+
 	<li class="nav-item border-left">
 		<a class="nav-link text-dark font-weight-bold" asp-area="" asp-controller="Home" asp-action="RoleCapabilities">@Localizer["Your capabilities"]</a>
 	</li>

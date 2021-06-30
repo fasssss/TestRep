@@ -26,10 +26,24 @@ namespace FirstProject.Data
         public DbSet<VoteModel> Votes { get; set; }
         public DbSet<VotesHistoryModel> History { get; set; }
         public DbSet<VotesTypesModel> VotesTypes { get; set; }
+        public DbSet<StatusTypesModel> StatusTypes { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
             builder.Entity<AuthorityDependenciesModel>().HasKey(c => new { c.AuthrityId, c.RepresentativeAuthrityId });
+            builder.Entity<VotesHistoryModel>().HasKey(c => new { c.QuestionId, c.VoteTypeId });
+            builder.Entity<VoteModel>().HasKey(c => new { c.QuestionId, c.UserId });
+
+            builder.Entity<PolleModel>().Property(c => c.Description).IsRequired();
+            builder.Entity<PolleModel>().Property(c => c.StatusId).IsRequired();
+            builder.Entity<QuestionModel>().Property(c => c.PolleId).IsRequired();
+            builder.Entity<QuestionModel>().Property(c => c.Question).IsRequired();
+            builder.Entity<VoteModel>().Property(c => c.UserId).IsRequired();
+            builder.Entity<VoteModel>().Property(c => c.QuestionId).IsRequired();
+            builder.Entity<VoteModel>().Property(c => c.VoteTypeId).IsRequired();
+            builder.Entity<VotesHistoryModel>().Property(c => c.VoteSummary).IsRequired();
+            builder.Entity<VotesTypesModel>().Property(c => c.VoteName).IsRequired();
+            builder.Entity<StatusTypesModel>().Property(c => c.StatusName).IsRequired();
             // Customize the ASP.NET Identity model and override the defaults if needed.
             // For example, you can rename the ASP.NET Identity table names and more.
             // Add your customizations after calling base.OnModelCreating(builder);

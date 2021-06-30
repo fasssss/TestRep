@@ -10,7 +10,6 @@ namespace FirstProject.Models
 	public class VoteModel
 	{
 		[Key]
-		public int Id { get; set; }
 		public System.Guid UserId { get; set; }
 		public int QuestionId { get; set; }
 		public int VoteTypeId { get; set; }

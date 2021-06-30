@@ -47,9 +47,89 @@ namespace FirstProject.Controllers
 			_appEnvironment = appEnvironment;
 		}
 
-		public IActionResult Polles()
+		public async Task<IActionResult> Voting(int questionId, int voteType)
 		{
-			return View();
+			var user = await _userManager.GetUserAsync(User);
+			if (_context.Votes.Find(questionId, user.Id) != null)
+			{
+				_context.Votes.Remove(_context.Votes.Find(questionId, user.Id));
+			}
+			_context.Votes.Add(new VoteModel {UserId =  user.Id, QuestionId = questionId, VoteTypeId = voteType});
+			_context.SaveChanges();
+			return Redirect(Request.Headers["Referer"].ToString());
+		}
+
+		public async Task<IActionResult> Poll(int pollId)
+		{
+			int Id = pollId;
+			var user = await _userManager.GetUserAsync(User);
+			return View(new PollesViewModel(_context, user, pollId));
+		}
+
+		public IActionResult PollesList()
+		{
+			return View(new PollesViewModel(_context));
+		}
+
+		public IActionResult PollsManagement()
+		{
+			return View(new PollesViewModel(_context));
+		}
+
+		[HttpPost]
+		public async Task<IActionResult> PollManagement(string action, int? pollId = null, string newPollDescription = null)
+		{
+			var user = await _userManager.GetUserAsync(User);
+			if (action == "delete")
+			{
+				_context.Polles.Remove(_context.Polles.Find(pollId));
+				_context.SaveChanges();
+			}
+
+			if (action == "change")
+			{
+				return View("PollAddingChangingPage", new PollesViewModel(_context, pollId));
+			}
+
+			if (action == "add")
+			{
+				int statusId = _context.StatusTypes.Where(x => x.StatusName == "Opend").Select(x => x.Id).ToList().First();  // FIND BETTER SOLUTION
+				_context.Polles.Add(new PolleModel { Description = newPollDescription, StatusId = statusId });
+				await _context.SaveChangesAsync();
+				return View("PollAddingChangingPage", new PollesViewModel(_context));
+			}
+
+			return View("PollsManagement",new PollesViewModel(_context));
+		}
+
+		public IActionResult PollSaveChanges(int? pollId, ICollection<string> questionsText
+			, string action, ICollection<int> questionsId = null)
+		{
+			var questionIdList = questionsId.ToList();
+			var questionTextList = questionsText.ToList();
+			if (action == "change")
+			{
+				for (int i = 0; i < questionsId.Count; i++)
+				{
+					if (string.IsNullOrEmpty(questionTextList[i]))
+					{
+						_context.Questions.Remove(_context.Questions.Find(questionIdList[i]));
+					}
+
+					if (_context.Questions.Find(questionIdList[i]) != null)
+					{
+						_context.Questions.Find(questionIdList[i]).Question = questionTextList[i];
+					}
+				}
+			}
+
+			if(pollId != null && action == "add")
+			{
+				_context.Questions.Add(new QuestionModel { PolleId = (int)pollId, Question = questionTextList[0] });
+			}
+
+			_context.SaveChanges();
+			return View("PollAddingChangingPage", new PollesViewModel(_context, pollId));
 		}
 
 		public async Task<IActionResult> RoleCapabilities()
@@ -153,8 +233,6 @@ namespace FirstProject.Controllers
 
 					_context.AuthorityDependencies.Remove(_context.AuthorityDependencies.Find(userAuthority.Id, userRepresentativeAuthority.Id));
 					_context.SaveChanges();
-					//await _userManager.RemoveClaimAsync(userAuthority, new Claim("RepresentativeAuthority", userRepresentativeAuthority.UserName));
-					//await _userManager.RemoveClaimAsync(userRepresentativeAuthority, new Claim("Authority", userAuthority.UserName));
 				}
 				await _signInManager.RefreshSignInAsync(userAuthority);
 			}
@@ -194,14 +272,6 @@ namespace FirstProject.Controllers
 					FileModel file = new FileModel { Name = uploadedFile.FileName, Path = path, UserID = user.Id};
 					_context.Files.Add(file);
 					_context.SaveChanges();
-
-					//int dotPosition = _context.Files.ToList().Last().Name.LastIndexOf('.');
-					//_context.Files.ToList().Last().Name = _context.Files.ToList().Last().Name
-					//	.Insert(dotPosition, _context.Files.ToList().Last().Id.ToString());
-					//dotPosition = _context.Files.ToList().Last().Path.LastIndexOf('.');                                       //For file uniqueness
-					//_context.Files.ToList().Last().Path = _context.Files.ToList().Last().Path
-					//	.Insert(dotPosition, _context.Files.ToList().Last().Id.ToString());
-					//_context.SaveChanges();
 
 					using (var fileStream = new FileStream(_appEnvironment.WebRootPath + _context.Files.ToList().Last().Path, FileMode.Create))
 					{

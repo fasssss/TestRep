@@ -1,1 +1,24 @@
-﻿<h4>Question Description</h4>
+﻿@model QuestionModel
+@{
+	List<VotesTypesModel> votesTypes = (List<VotesTypesModel>)ViewBag.votesTypes;
+	List<VoteModel> votes = (List<VoteModel>)ViewBag.votes;
+	ExtendedUserModel user = (ExtendedUserModel)ViewBag.user;
+}
+<h4>Question Description</h4>
+<p><b>Description: </b>@Model.Question</p>
+<form method="post" asp-controller="Home" asp-action="Voting" asp-route-questionId="@Model.Id">
+	<div style="text-align:center">
+		@foreach (var voteType in votesTypes)
+		{
+			if (votes.Find(x =>
+			x.QuestionId == Model.Id && x.UserId == user.Id && x.VoteTypeId == voteType.Id) != null)
+			{
+				<button class="bg-success" style="border-radius: 0.5em" name="voteType" value="@voteType.Id">@voteType.VoteName</button>
+			}
+			else
+			{
+				<button class="bg-white" style="border-radius: 0.5em" name="voteType" value="@voteType.Id">@voteType.VoteName</button>
+			}
+		}
+	</div>
+</form>

@@ -10,7 +10,6 @@ namespace FirstProject.Models
 	public class VotesHistoryModel
 	{
 		[Key]
-		public int Id { get; set; }
 		public int VoteTypeId { get; set; }
 		public int QuestionId { get; set; }
 		public int VoteSummary { get; set; }

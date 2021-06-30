@@ -1,0 +1,17 @@
+﻿@model PollesViewModel
+<h1>List of Polles</h1>
+
+<ol>
+	@foreach (var poll in Model.PollesList)
+	{
+	<li class="border border-dark m-2 p-1" style="border-radius: 0.5em">
+		<form method="post" asp-controller="Home" asp-action="Poll" asp-route-pollId="@poll.Id">
+			<button class="bg-white border-0" style="width:100%">
+				<div style="text-align:left">
+					<b>Description:</b> @poll.Description
+				</div>
+			</button>
+		</form>
+	</li>
+	}
+</ol>
