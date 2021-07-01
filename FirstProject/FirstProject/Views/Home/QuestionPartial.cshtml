@@ -6,6 +6,12 @@
 }
 <h4>Question Description</h4>
 <p><b>Description: </b>@Model.Question</p>
+@if (Model.FileId != null)
+{
+	<form method="post" asp-controller="Home" asp-action="InspectingUserFilesInDB" asp-route-questionId="@Model.Id">
+		<button class="bg-white" style="border-radius: 0.5em">Download document</button>
+	</form>
+}
 <form method="post" asp-controller="Home" asp-action="Voting" asp-route-questionId="@Model.Id">
 	<div style="text-align:center">
 		@foreach (var voteType in votesTypes)

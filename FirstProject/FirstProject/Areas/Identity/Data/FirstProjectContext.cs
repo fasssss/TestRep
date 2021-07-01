@@ -26,6 +26,7 @@ namespace FirstProject.Data
         public DbSet<VoteModel> Votes { get; set; }
         public DbSet<VotesHistoryModel> History { get; set; }
         public DbSet<VotesTypesModel> VotesTypes { get; set; }
+        public DbSet<FileInDbModel> FilesInDb { get; set; }
         public DbSet<StatusTypesModel> StatusTypes { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -44,6 +45,9 @@ namespace FirstProject.Data
             builder.Entity<VotesHistoryModel>().Property(c => c.VoteSummary).IsRequired();
             builder.Entity<VotesTypesModel>().Property(c => c.VoteName).IsRequired();
             builder.Entity<StatusTypesModel>().Property(c => c.StatusName).IsRequired();
+            builder.Entity<FileInDbModel>().Property(c => c.ContentType).IsRequired();
+            builder.Entity<FileInDbModel>().Property(c => c.File).IsRequired();
+            builder.Entity<FileInDbModel>().Property(c => c.FileName).IsRequired();
             // Customize the ASP.NET Identity model and override the defaults if needed.
             // For example, you can rename the ASP.NET Identity table names and more.
             // Add your customizations after calling base.OnModelCreating(builder);

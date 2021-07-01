@@ -37,13 +37,8 @@ namespace FirstProject.Models
 		public List<QuestionModel> QuestionsList { get; private set; }
 		public List<VoteModel> Votes { get; set; }
 
-		public void AddOrChangeQuestion(int questionId, string question, byte[] file = null)
+		public void AddOrChangeQuestion(int questionId, string question)
 		{
-			if (file != null)
-			{
-				_context.Questions.Find(question).File = file;
-			}
-
 			_context.Questions.Find(question).Question = question;
 			_context.SaveChanges();
 		}

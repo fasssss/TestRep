@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Http;
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.StaticFiles;
+using Microsoft.EntityFrameworkCore;
 
 namespace FirstProject.Controllers
 {
@@ -54,7 +55,7 @@ namespace FirstProject.Controllers
 			{
 				_context.Votes.Remove(_context.Votes.Find(questionId, user.Id));
 			}
-			_context.Votes.Add(new VoteModel {UserId =  user.Id, QuestionId = questionId, VoteTypeId = voteType});
+			_context.Votes.Add(new VoteModel { UserId = user.Id, QuestionId = questionId, VoteTypeId = voteType });
 			_context.SaveChanges();
 			return Redirect(Request.Headers["Referer"].ToString());
 		}
@@ -99,7 +100,7 @@ namespace FirstProject.Controllers
 				return View("PollAddingChangingPage", new PollesViewModel(_context));
 			}
 
-			return View("PollsManagement",new PollesViewModel(_context));
+			return View("PollsManagement", new PollesViewModel(_context));
 		}
 
 		public IActionResult PollSaveChanges(int? pollId, ICollection<string> questionsText
@@ -123,9 +124,9 @@ namespace FirstProject.Controllers
 				}
 			}
 
-			if(pollId != null && action == "add")
+			if (pollId != null && action == "add")
 			{
-				_context.Questions.Add(new QuestionModel { PolleId = (int)pollId, Question = questionTextList[0] });
+				_context.Questions.Add(new QuestionModel { PolleId = (int)pollId, Question = questionTextList[0]});
 			}
 
 			_context.SaveChanges();
@@ -148,7 +149,7 @@ namespace FirstProject.Controllers
 							}
 						case "Authority":
 							{
-								var representativeAuthorityModel = _context.AuthorityDependencies.Where(x => x.AuthrityId == user.Id )
+								var representativeAuthorityModel = _context.AuthorityDependencies.Where(x => x.AuthrityId == user.Id)
 									.Select(x => x.RepresentativeAuthorityModel).ToList();
 								if (representativeAuthorityModel.Count > 0)
 								{
@@ -224,7 +225,7 @@ namespace FirstProject.Controllers
 				if (action == "Rely")
 				{
 					_context.AuthorityDependencies.Add(
-						new AuthorityDependenciesModel { RepresentativeAuthrityId = userRepresentativeAuthority.Id, AuthrityId = userAuthority.Id});
+						new AuthorityDependenciesModel { RepresentativeAuthrityId = userRepresentativeAuthority.Id, AuthrityId = userAuthority.Id });
 					_context.SaveChanges();
 				}
 
@@ -256,31 +257,68 @@ namespace FirstProject.Controllers
 		}
 
 		[HttpPost]
-		public async Task<IActionResult> AddFile(IFormFile uploadedFile, string path)
+		public IActionResult AddFileToDB(IFormFile uploadedFile, int questionId)
+		{
+			if (_context.Questions.Find(questionId).FileId != null)
+			{
+				_context.FilesInDb.Remove(_context.FilesInDb.Find(_context.Questions.Find(questionId).FileId));
+				_context.Questions.Find(questionId).FileId = null;
+			}
+
+			using (var binaryReader = new BinaryReader(uploadedFile.OpenReadStream()))
+			{
+				byte[] byteFile = binaryReader.ReadBytes((int)uploadedFile.Length);
+				_context.FilesInDb.Add(
+					new FileInDbModel { File = byteFile, ContentType = uploadedFile.ContentType, FileName = uploadedFile.FileName});
+				_context.SaveChanges();
+				int id = _context.FilesInDb.Where(x => x.File == byteFile).Select(x => x).First().Id;
+				_context.Questions.Find(questionId).FileId = id;
+				_context.SaveChanges();
+			}
+
+			return View("PollAddingChangingPage", new PollesViewModel(_context, _context.Questions.Find(questionId).PolleId));
+		}
+
+		[HttpPost]
+		public async Task<IActionResult> AddFile(IFormFile uploadedFile, string path = null)
 		{
 			var user = await _userManager.GetUserAsync(User);
-			if (user != null)
+			if (path != null)
 			{
-				if (uploadedFile != null)
+				if (user != null)
 				{
-					path =path + User.Identity.Name + "/";
-					if (!Directory.Exists(_appEnvironment.WebRootPath + path + User.Identity.Name + "/"))
+					if (uploadedFile != null && path != null)
 					{
-						Directory.CreateDirectory(_appEnvironment.WebRootPath + path + User.Identity.Name + "/");
-					}
-					path += uploadedFile.FileName;
-					FileModel file = new FileModel { Name = uploadedFile.FileName, Path = path, UserID = user.Id};
-					_context.Files.Add(file);
-					_context.SaveChanges();
+						path = path + User.Identity.Name + "/";
+						if (!Directory.Exists(_appEnvironment.WebRootPath + path + User.Identity.Name + "/"))
+						{
+							Directory.CreateDirectory(_appEnvironment.WebRootPath + path + User.Identity.Name + "/");
+						}
 
-					using (var fileStream = new FileStream(_appEnvironment.WebRootPath + _context.Files.ToList().Last().Path, FileMode.Create))
-					{
-						await uploadedFile.CopyToAsync(fileStream);
+						path += uploadedFile.FileName;
+						FileModel file = new FileModel { Name = uploadedFile.FileName, Path = path, UserID = user.Id };
+						_context.Files.Add(file);
+						_context.SaveChanges();
+						using (var fileStream = new FileStream(_appEnvironment.WebRootPath + _context.Files.ToList().Last().Path, FileMode.Create))
+						{
+							await uploadedFile.CopyToAsync(fileStream);
+						}
 					}
 				}
 			}
 
 			return RedirectToAction("Index");
+		}
+
+		[HttpPost]
+		public IActionResult InspectingUserFilesInDB(int questionId)
+		{
+			QuestionModel question = _context.Questions.Find(questionId);
+			_context.FilesInDb.Where(x => x.Id == question.FileId).Load();
+			byte[] fileInBytes = question.File.File;
+			string fileType = question.File.ContentType;
+			string fileName = question.File.FileName;
+			return File(fileInBytes, fileType, fileName);
 		}
 
 		[HttpPost]
