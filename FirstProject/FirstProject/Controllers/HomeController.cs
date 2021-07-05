@@ -114,6 +114,13 @@ namespace FirstProject.Controllers
 				{
 					if (string.IsNullOrEmpty(questionTextList[i]))
 					{
+						if (_context.Questions.Find(questionIdList[i]).FileId != null)
+						{
+							_context.FilesInDb.Remove(
+								_context.FilesInDb.Find(
+									_context.Questions.Find(questionIdList[i]).FileId));
+						}
+
 						_context.Questions.Remove(_context.Questions.Find(questionIdList[i]));
 					}
 
@@ -269,7 +276,12 @@ namespace FirstProject.Controllers
 			{
 				byte[] byteFile = binaryReader.ReadBytes((int)uploadedFile.Length);
 				_context.FilesInDb.Add(
-					new FileInDbModel { File = byteFile, ContentType = uploadedFile.ContentType, FileName = uploadedFile.FileName});
+					new FileInDbModel {
+						File = byteFile
+						, ContentType = uploadedFile.ContentType
+						, FileName = uploadedFile.FileName
+						, QuestionId = questionId});
+
 				_context.SaveChanges();
 				int id = _context.FilesInDb.Where(x => x.File == byteFile).Select(x => x).First().Id;
 				_context.Questions.Find(questionId).FileId = id;

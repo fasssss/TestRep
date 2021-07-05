@@ -13,7 +13,7 @@
 					<li class="border border-dark m-1 p-1" style="background-color:lightgray; border-radius: 0.5em">
 						<div class="btn-group-vertical m-2 p-2">
 							<input hidden="hidden" name="questionsId" value="@Model.CurrentQuestions[i].Id">
-							<textarea cols="90" rows="10" name="questionsText" value="@Model.CurrentQuestions[i].Question">@Model.CurrentQuestions[i].Question</textarea>
+							<textarea cols="150" rows="10" name="questionsText" value="@Model.CurrentQuestions[i].Question">@Model.CurrentQuestions[i].Question</textarea>
 							<br>
 							<input type="file" form="file-uploading" name="uploadedFile" />
 							<input hidden="hidden" type="number" form="file-uploading" name="questionId" value="@Model.CurrentQuestions[i].Id" />
