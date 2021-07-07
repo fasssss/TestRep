@@ -1,30 +1,36 @@
-﻿@model QuestionModel
-@{
-	List<VotesTypesModel> votesTypes = (List<VotesTypesModel>)ViewBag.votesTypes;
-	List<VoteModel> votes = (List<VoteModel>)ViewBag.votes;
-	ExtendedUserModel user = (ExtendedUserModel)ViewBag.user;
-}
+﻿@model QuestionViewModel
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery-ajax-unobtrusive@3.2.6/dist/jquery.unobtrusive-ajax.min.js"></script>
+
 <h4>Question Description</h4>
-<p><b>Description: </b>@Model.Question</p>
-@if (Model.FileId != null)
+<p><b>Description: </b>@Model.Question.Question</p>
+@if (Model.Question.FileId != null)
 {
-	<form method="post" asp-controller="Home" asp-action="InspectingUserFilesInDB" asp-route-questionId="@Model.Id">
-		<button class="bg-white" style="border-radius: 0.5em">Download document</button>
-	</form>
+	<button form="downloading-form" class="bg-white" style="border-radius: 0.5em" name="questionId" value="@Model.Question.Id">Download document</button>
 }
-<form method="post" asp-controller="Home" asp-action="Voting" asp-route-questionId="@Model.Id">
-	<div style="text-align:center">
-		@foreach (var voteType in votesTypes)
+@*<form id="form" data-ajax-method="post" data-ajax="true" data-ajax-mode="replace" data-ajax-update="#@Model.Question.Id" asp-controller="Home" asp-action="Voting" asp-route-questionId="@Model.Question.Id">*@
+<div style="text-align:center">
+	@foreach (var voteType in Model.VotesTypes)
+	{
+		if (Model.Votes.Find(x =>
+		x.QuestionId == Model.Question.Id && x.UserId == Model.User.Id && x.VoteTypeId == voteType.Id) != null)
 		{
-			if (votes.Find(x =>
-			x.QuestionId == Model.Id && x.UserId == user.Id && x.VoteTypeId == voteType.Id) != null)
-			{
-				<button class="bg-success" style="border-radius: 0.5em" name="voteType" value="@voteType.Id">@voteType.VoteName</button>
-			}
-			else
-			{
-				<button class="bg-white" style="border-radius: 0.5em" name="voteType" value="@voteType.Id">@voteType.VoteName</button>
-			}
+			<input style="background-color:forestgreen" type='button' id="@voteType.Id@Model.Question.Id" value='@voteType.VoteName' />
 		}
-	</div>
-</form>
+		else
+		{
+			<input type='button' id="@voteType.Id@Model.Question.Id" value='@voteType.VoteName' />
+		}
+
+		<script type="text/javascript">
+
+			$(document).ready(function () {
+				$('#@voteType.Id@Model.Question.Id').click(function (e) {
+					e.preventDefault();
+						$('#@Model.Question.Id').load('@Url.Action("Voting", "Home")?questionId=' + '@Model.Question.Id' + '&voteType=' + '@voteType.Id')
+					});
+				});
+		</script>
+	}
+</div>
+@*</form>*@

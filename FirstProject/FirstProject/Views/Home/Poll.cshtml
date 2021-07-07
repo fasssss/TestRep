@@ -1,22 +1,20 @@
 ﻿@model PollesViewModel
+
 <h1>Polles Page</h1>
 <hr>
 <h2>Questions</h2>
-<ol>
-@{
-	int i = 0;
-	ViewBag.votesTypes = Model.VotesTypes;
-	ViewBag.user = Model.User;
-	ViewBag.votes = Model.Votes;
-}
-@foreach (var question in Model.CurrentQuestions)
-{
-	i++;
-	<li class="border border-dark m-2 p-1"  style="border-radius: 0.5em">
-		<details>
-			<summary>Question @i</summary>
-			<partial name="QuestionPartial" model="question" />
-		</details>
-	</li>
-}
-</ol>
+<form id="downloading-form" method="post" asp-controller="Home" asp-action="InspectingUserFilesInDB"></form>
+	<ol>
+		@for (int i = 0; i < Model.CurrentQuestions?.Count; i++)
+		{
+			<li class="border border-dark m-2 p-1" style="border-radius: 0.5em">
+				<details>
+					<summary>Question @(i+1)</summary>
+					<div id="@Model.CurrentQuestions[i].Id">
+						<partial name="QuestionPartial"
+								 model="new QuestionViewModel { Question = Model.CurrentQuestions[i], User = Model.User, Votes = Model.Votes, VotesTypes = Model.VotesTypes}" />
+					</div>
+				</details>
+			</li>
+		}
+	</ol>

@@ -48,6 +48,7 @@ namespace FirstProject.Controllers
 			_appEnvironment = appEnvironment;
 		}
 
+
 		public async Task<IActionResult> Voting(int questionId, int voteType)
 		{
 			var user = await _userManager.GetUserAsync(User);
@@ -57,7 +58,9 @@ namespace FirstProject.Controllers
 			}
 			_context.Votes.Add(new VoteModel { UserId = user.Id, QuestionId = questionId, VoteTypeId = voteType });
 			_context.SaveChanges();
-			return Redirect(Request.Headers["Referer"].ToString());
+
+			//return PartialView("QuestionPartial", new PollesViewModel(_context, user, _context.Questions.Find(questionId).PolleId));
+			return PartialView("QuestionPartial", new QuestionViewModel { Question = _context.Questions.Find(questionId), User = user, Votes = _context.Votes.ToList(), VotesTypes = _context.VotesTypes.ToList() });
 		}
 
 		public async Task<IActionResult> Poll(int pollId)
@@ -96,8 +99,9 @@ namespace FirstProject.Controllers
 			{
 				int statusId = _context.StatusTypes.Where(x => x.StatusName == "Opend").Select(x => x.Id).ToList().First();  // FIND BETTER SOLUTION
 				_context.Polles.Add(new PolleModel { Description = newPollDescription, StatusId = statusId });
-				await _context.SaveChangesAsync();
-				return View("PollAddingChangingPage", new PollesViewModel(_context));
+				_context.SaveChanges();
+				int id = _context.Polles.Where(x => x.Description == newPollDescription).Single().Id;
+				return View("PollAddingChangingPage", new PollesViewModel(_context, id));
 			}
 
 			return View("PollsManagement", new PollesViewModel(_context));
@@ -283,7 +287,7 @@ namespace FirstProject.Controllers
 						, QuestionId = questionId});
 
 				_context.SaveChanges();
-				int id = _context.FilesInDb.Where(x => x.File == byteFile).Select(x => x).First().Id;
+				int id = _context.FilesInDb.Where(x => x.File == byteFile).Select(x => x).ToList().Last().Id;
 				_context.Questions.Find(questionId).FileId = id;
 				_context.SaveChanges();
 			}
