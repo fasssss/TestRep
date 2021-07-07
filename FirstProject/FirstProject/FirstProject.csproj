@@ -3,11 +3,20 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UserSecretsId>aspnet-FirstProject-9AE5D008-64E4-407A-846E-738F8556810F</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
 
   <ItemGroup>
     <Compile Remove="Migrations\20210601080940_localeV1.cs" />
     <Compile Remove="Migrations\20210601080940_localeV1.Designer.cs" />
+    <Compile Remove="Migrations\20210620210004_ChangeIdType.cs" />
+    <Compile Remove="Migrations\20210620210004_ChangeIdType.Designer.cs" />
+    <Compile Remove="Migrations\20210622234936_AuthoritiesDependencies.cs" />
+    <Compile Remove="Migrations\20210622234936_AuthoritiesDependencies.Designer.cs" />
+    <Compile Remove="Migrations\20210622235416_AuthoritiesDependencies.cs" />
+    <Compile Remove="Migrations\20210622235416_AuthoritiesDependencies.Designer.cs" />
+    <Compile Remove="Migrations\20210626212038_ExpandedKeyInViewModel.cs" />
+    <Compile Remove="Migrations\20210626212038_ExpandedKeyInViewModel.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -25,7 +34,14 @@
     </PackageReference>
     <PackageReference Include="Microsoft.Identity.Web" Version="1.10.0" />
     <PackageReference Include="Microsoft.Identity.Web.UI" Version="1.10.0" />
+    <PackageReference Include="Microsoft.jQuery.Unobtrusive.Ajax" Version="3.2.6" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.13" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\UserFiles\" />
+    <Folder Include="wwwroot\UserFiles\Gorshok\" />
   </ItemGroup>
 
 </Project>

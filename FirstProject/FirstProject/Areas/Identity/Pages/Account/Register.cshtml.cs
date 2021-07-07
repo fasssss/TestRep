@@ -96,6 +96,7 @@ namespace FirstProject.Areas.Identity.Pages.Account
                 }
 
                 _ = await _userManager.AddClaimAsync(user, new Claim("CultureID", user.LocaleID.ToString()));
+                _ = await _userManager.AddClaimAsync(user, new Claim("RegisterDate", DateTime.Now.ToShortDateString()));
                 _ = await _userManager.UpdateAsync(user);
                 if (result.Succeeded)
                 {

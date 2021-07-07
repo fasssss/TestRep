@@ -1,0 +1,13 @@
+
+FirstProject/.vs/FirstProject/v16/.suo
+
+# exclude everything dll
+*.dll
+
+FirstProject/FirstProject/bin/Debug/netcoreapp3.1/
+
+*.cache
+
+FirstProject/FirstProject/obj/Debug/netcoreapp3.1/
+
+*.v2

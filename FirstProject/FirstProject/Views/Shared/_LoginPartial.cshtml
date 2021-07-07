@@ -4,29 +4,54 @@
 @inject SignInManager<ExtendedUserModel> SignInManager
 @inject UserManager<ExtendedUserModel> UserManager
 @inject IViewLocalizer Localizer
+@{
+	var user = await UserManager.GetUserAsync(User);
+	IList<string> role = null;
+	if (user != null)
+	{
+		role = await UserManager.GetRolesAsync(user);
+	}
+}
 
 <ul class="navbar-nav">
-	<li class="nav-item">
+	@if (User.IsInRole("Authority") || User.IsInRole("RepresentativeAuthority"))
+	{
+		<li class="nav-item border-left">
+			<a class="nav-link text-dark font-weight-bold" asp-area="" asp-controller="Home" asp-action="PollesList">@Localizer["Polles List"]</a>
+		</li>
+	}
+
+	@if (User.IsInRole("LeadManager"))
+	{
+		<li class="nav-item border-left">
+			<a class="nav-link text-dark font-weight-bold" asp-area="" asp-controller="Home" asp-action="PollsManagement">@Localizer["Polles Management"]</a>
+		</li>
+	}
+
+	<li class="nav-item border-left">
+		<a class="nav-link text-dark font-weight-bold" asp-area="" asp-controller="Home" asp-action="RoleCapabilities">@Localizer["Your capabilities"]</a>
+	</li>
+	<li class="nav-item border-left">
 		<a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="PrivateInfo">@Localizer["Privite Info"]</a>
 	</li>
 	@if (SignInManager.IsSignedIn(User))
 	{
-		<li class="nav-item">
+		<li class="nav-item border-left">
 			<a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">@Localizer["Hello"] @User.Identity.Name!</a>
 		</li>
-		<li class="nav-item">
+		<li class="nav-item border-left">
 			<form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
 				<button type="submit" class="nav-link btn btn-link text-dark">@Localizer["Logout"]</button>
-</form>
+			</form>
 		</li>
 	}
 	else
 	{
-		<li class="nav-item">
+		<li class="nav-item border-left">
 			<a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register">@Localizer["Register"]</a>
-</li>
-		<li class="nav-item">
+		</li>
+		<li class="nav-item border-left">
 			<a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login">@Localizer["Login"]</a>
-</li>
+		</li>
 	}
 </ul>
