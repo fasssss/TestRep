@@ -1,0 +1,19 @@
+﻿@model HistoryViewModel
+<h1>Polls history</h1>
+<ol>
+	@foreach (var poll in Model.PollsHistoryList)
+	{
+		<li class="border border-dark m-2 p-1" style="border-radius: 0.5em">
+				<div style="text-align:left">
+					<b>Description:</b> @poll.PollName
+				<span class="float-right">
+					@foreach (var votes in poll.Votes.ToList())
+					{
+						<b> | @votes.VoteName = @votes.VoteSummary</b>
+					}
+					<b> |</b>
+				</span>
+				</div>
+		</li>
+	}
+</ol>

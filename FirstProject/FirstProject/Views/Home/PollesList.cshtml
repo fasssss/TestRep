@@ -1,6 +1,8 @@
 ﻿@model PollesViewModel
+<form method="post" asp-controller="Home" asp-action="History">
+	<button class="bg-white border-0 float-right" type="submit"><img src="~/history.png"></button>
+</form>
 <h1>List of Polles</h1>
-
 <ol>
 	@foreach (var poll in Model.PollesList)
 	{

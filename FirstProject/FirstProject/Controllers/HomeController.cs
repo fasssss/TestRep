@@ -59,15 +59,33 @@ namespace FirstProject.Controllers
 			_context.Votes.Add(new VoteModel { UserId = user.Id, QuestionId = questionId, VoteTypeId = voteType });
 			_context.SaveChanges();
 
-			//return PartialView("QuestionPartial", new PollesViewModel(_context, user, _context.Questions.Find(questionId).PolleId));
-			return PartialView("QuestionPartial", new QuestionViewModel { Question = _context.Questions.Find(questionId), User = user, Votes = _context.Votes.ToList(), VotesTypes = _context.VotesTypes.ToList() });
+			return PartialView("QuestionPartial"
+				, new QuestionViewModel 
+				{ Question = _context.Questions.Find(questionId), User = user, Votes = _context.Votes.ToList(), VotesTypes = _context.VotesTypes.ToList() });
 		}
 
 		public async Task<IActionResult> Poll(int pollId)
 		{
 			int Id = pollId;
 			var user = await _userManager.GetUserAsync(User);
+			int status = _context.Polles.Find(pollId).StatusId;
+			if (status == _context.StatusTypes.Where(x => x.StatusName == "Opened").Select(x => x.Id).ToList().First())
+			{
+				return View(new PollesViewModel(_context, user, pollId));
+			}
+
+			if (status == _context.StatusTypes.Where(x => x.StatusName == "Stopped").Select(x => x.Id).ToList().First())
+			{
+				return View("PollSummarizing", new SummarizingViewModel(_context, pollId));
+			}
+
 			return View(new PollesViewModel(_context, user, pollId));
+		}
+
+		[HttpPost]
+		public IActionResult History()
+		{
+			return View(new HistoryViewModel { PollsHistoryList = _context.PollsHistory.Include(x => x.Votes).ToList() });
 		}
 
 		public IActionResult PollesList()
@@ -80,24 +98,74 @@ namespace FirstProject.Controllers
 			return View(new PollesViewModel(_context));
 		}
 
+		public async Task<IActionResult> PollChangeState(int statusTypeId, int pollId)
+		{
+			if (_context.StatusTypes.Find(statusTypeId).StatusName == "Stopped"
+				&& _context.StatusTypes.Find(statusTypeId).StatusName == "Opened")
+			{
+				_context.Polles.Find(pollId).StatusId = statusTypeId;
+				await _context.SaveChangesAsync();
+			}
+
+			if (_context.StatusTypes.Find(statusTypeId).StatusName == "Closed")
+			{
+				_context.PollsHistory.Add(
+					new PollsHistoryModel { PollName = _context.Polles.Find(pollId).Description });
+				await _context.SaveChangesAsync();
+				var lastPollInHistory = _context.PollsHistory.ToList().Last();
+
+				var votesTypes = _context.VotesTypes.ToList();
+				//_context.Votes.Where(x => x.QuestionModel.PolleId == pollId).Load();
+				var votes = _context.Votes.Include(x => x.QuestionModel).ToList();
+				foreach (var type in votesTypes)
+				{
+					List<VoteModel> currentPollAndTypeVotes = votes.FindAll(x => x.VoteTypeId == type.Id && x.QuestionModel.PolleId == pollId);
+					int amount = currentPollAndTypeVotes.Count();
+					foreach (var question in _context.Questions.Where(x => x.PolleId == pollId).Select(x => x).ToList())
+					{
+						foreach (var authoritieCouple in _context.AuthorityDependencies.ToList())
+						{
+							if (!_context.Votes.ToList().Exists(x => x.QuestionId == question.Id && x.UserId == authoritieCouple.AuthrityId)
+								&& _context.Votes.ToList().Exists(x => x.QuestionId == question.Id && x.VoteTypeId == type.Id
+															&& x.UserId == authoritieCouple.RepresentativeAuthrityId))
+							{
+								amount++;
+							}
+						}
+					}
+
+					_context.VotesInPollsHistory.Add(
+						new VotesHistoryModel { VoteSummary = amount, PollHistoryId = lastPollInHistory.Id, VoteName = type.VoteName});
+				}
+
+				await _context.SaveChangesAsync();
+			}
+
+			return View("PollsManagement", new PollesViewModel(_context));
+		}
 		[HttpPost]
 		public async Task<IActionResult> PollManagement(string action, int? pollId = null, string newPollDescription = null)
 		{
 			var user = await _userManager.GetUserAsync(User);
-			if (action == "delete")
+			if (action == "delete" && pollId != null)
 			{
 				_context.Polles.Remove(_context.Polles.Find(pollId));
 				_context.SaveChanges();
 			}
 
-			if (action == "change")
+			if (action == "change" && pollId != null)
 			{
 				return View("PollAddingChangingPage", new PollesViewModel(_context, pollId));
 			}
 
+			if (action == "changeState" && pollId != null)
+			{
+				return View("PollSummarizing", new SummarizingViewModel(_context, (int)pollId));
+			}
+
 			if (action == "add")
 			{
-				int statusId = _context.StatusTypes.Where(x => x.StatusName == "Opend").Select(x => x.Id).ToList().First();  // FIND BETTER SOLUTION
+				int statusId = _context.StatusTypes.Where(x => x.StatusName == "Opened").Select(x => x.Id).ToList().First();  // FIND BETTER SOLUTION
 				_context.Polles.Add(new PolleModel { Description = newPollDescription, StatusId = statusId });
 				_context.SaveChanges();
 				int id = _context.Polles.Where(x => x.Description == newPollDescription).Single().Id;

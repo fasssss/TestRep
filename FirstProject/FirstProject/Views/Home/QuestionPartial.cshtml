@@ -8,7 +8,7 @@
 {
 	<button form="downloading-form" class="bg-white" style="border-radius: 0.5em" name="questionId" value="@Model.Question.Id">Download document</button>
 }
-@*<form id="form" data-ajax-method="post" data-ajax="true" data-ajax-mode="replace" data-ajax-update="#@Model.Question.Id" asp-controller="Home" asp-action="Voting" asp-route-questionId="@Model.Question.Id">*@
+
 <div style="text-align:center">
 	@foreach (var voteType in Model.VotesTypes)
 	{
@@ -19,18 +19,17 @@
 		}
 		else
 		{
-			<input type='button' id="@voteType.Id@Model.Question.Id" value='@voteType.VoteName' />
+			<input type='button' id="@voteType.Id" value='@voteType.VoteName' />
 		}
 
-		<script type="text/javascript">
+<script type="text/javascript">
 
 			$(document).ready(function () {
-				$('#@voteType.Id@Model.Question.Id').click(function (e) {
+				$('#@Model.Question.Id #@voteType.Id').click(function (e) {
 					e.preventDefault();
 						$('#@Model.Question.Id').load('@Url.Action("Voting", "Home")?questionId=' + '@Model.Question.Id' + '&voteType=' + '@voteType.Id')
 					});
 				});
-		</script>
+</script>
 	}
 </div>
-@*</form>*@

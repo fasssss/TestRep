@@ -1,4 +1,5 @@
 ﻿using FirstProject.Data;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +13,7 @@ namespace FirstProject.Models
 		public PollesViewModel(FirstProjectContext context, int? PollId = null)
 		{
 			_context = context;
-			PollesList = _context.Polles.ToList();
+			PollesList = _context.Polles.Include(x => x.StatusType).ToList();
 			QuestionsList = _context.Questions.ToList();
 			VotesTypes = _context.VotesTypes.ToList();
 			Votes = _context.Votes.Select(x => x).ToList();

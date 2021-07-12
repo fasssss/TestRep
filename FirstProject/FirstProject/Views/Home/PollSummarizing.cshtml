@@ -1,0 +1,26 @@
+﻿@model SummarizingViewModel
+
+<h1>Polles Page</h1>
+<hr>
+<h2>Questions</h2>
+<ol>
+	@foreach(var question in Model.CurrentPollQuestions)
+	{
+		<li class="border border-dark m-2 p-1" style="border-radius: 0.5em">
+			<p><b>Description: </b>@question.Question</p>
+			<hr>
+			<p class="text-center">@Model.QuestionSummarizing(question)<p>
+		</li>
+	}
+</ol>
+@if (User.IsInRole("LeadManager"))
+{
+	<form method="post" asp-controller="Home" asp-action="PollChangeState" asp-route-pollId="@Model.pollId">
+	<div class="text-center">
+	@foreach (var statusType in Model.PollStatusList)
+	{
+		<button name="statusTypeId" value="@statusType.Id">@statusType.StatusName</button>
+	}
+	</div>
+	</form>
+}

@@ -5,8 +5,7 @@
 	Model.RoleList.Remove(Model.RoleList.Find(x => x.Name == "Guest"));
 	var authorities = from authority in Model.UserList where authority.Role == "Authority" select authority.UserName;
 	List<FileModel> files = (List<FileModel>)TempData["Files"];
-	var filesUserId = files.Select(x => x.UserID);
-	var filesName = files.Select(x => x.Name);
+	var filesUserId = files.Select(x => x.UserID.ToString()).ToList();
 }
 <h1 class="font-weight-bold text-center">LeadManager page</h1>
 <br>
@@ -33,8 +32,10 @@
 <ol>
 	@foreach (var user in Model.UserList)
 	{
-		if (user.Role == "Guest" && filesUserId.ToString().Contains(user.UserID))
+		if (user.Role == "Guest" && filesUserId.Contains(user.UserID))
 		{
+			var filesName = files.Where(x => x.UserID.ToString() == user.UserID).Select(x => x.Name).ToList();
+
 			<li class="border m-2 p-2">
 				<div class="nav float-right">
 					<form method="post" asp-controller="Home" asp-action="LeadManagersModeration" asp-route-userName="@user.UserName">

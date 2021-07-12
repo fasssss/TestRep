@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,14 +8,13 @@ namespace FirstProject.Models
 {
 	public class VotesHistoryModel
 	{
-		[Key]
-		public int VoteTypeId { get; set; }
-		public int QuestionId { get; set; }
+		public System.Guid Id { get; set; }
+		public string VoteName { get; set; }
 		public int VoteSummary { get; set; }
 
-		[ForeignKey("QuestionId")]
-		public QuestionModel QuestionModel { get; set; }
-		[ForeignKey("VoteTypeId")]
-		public VotesTypesModel VoteTypeModel { get; set; }
+		public System.Guid PollHistoryId { get; set; }
+
+		[ForeignKey("PollHistoryId")]
+		public PollsHistoryModel PollHistory { get; set; }
 	}
 }

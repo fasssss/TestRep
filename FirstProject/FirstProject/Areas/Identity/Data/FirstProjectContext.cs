@@ -24,7 +24,8 @@ namespace FirstProject.Data
         public DbSet<PolleModel> Polles { get; set; }
         public DbSet<QuestionModel> Questions { get; set; }
         public DbSet<VoteModel> Votes { get; set; }
-        public DbSet<VotesHistoryModel> History { get; set; }
+        public DbSet<PollsHistoryModel> PollsHistory { get; set; }
+        public DbSet<VotesHistoryModel> VotesInPollsHistory { get; set; }
         public DbSet<VotesTypesModel> VotesTypes { get; set; }
         public DbSet<FileInDbModel> FilesInDb { get; set; }
         public DbSet<StatusTypesModel> StatusTypes { get; set; }
@@ -32,7 +33,6 @@ namespace FirstProject.Data
         {
             base.OnModelCreating(builder);
             builder.Entity<AuthorityDependenciesModel>().HasKey(c => new { c.AuthrityId, c.RepresentativeAuthrityId });
-            builder.Entity<VotesHistoryModel>().HasKey(c => new { c.QuestionId, c.VoteTypeId });
             builder.Entity<VoteModel>().HasKey(c => new { c.QuestionId, c.UserId });
 
             builder.Entity<PolleModel>().Property(c => c.Description).IsRequired();
@@ -42,7 +42,6 @@ namespace FirstProject.Data
             builder.Entity<VoteModel>().Property(c => c.UserId).IsRequired();
             builder.Entity<VoteModel>().Property(c => c.QuestionId).IsRequired();
             builder.Entity<VoteModel>().Property(c => c.VoteTypeId).IsRequired();
-            builder.Entity<VotesHistoryModel>().Property(c => c.VoteSummary).IsRequired();
             builder.Entity<VotesTypesModel>().Property(c => c.VoteName).IsRequired();
             builder.Entity<StatusTypesModel>().Property(c => c.StatusName).IsRequired();
             builder.Entity<FileInDbModel>().Property(c => c.ContentType).IsRequired();
