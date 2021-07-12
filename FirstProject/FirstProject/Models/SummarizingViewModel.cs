@@ -19,9 +19,11 @@ namespace FirstProject.Models
 			VotesTypes = _context.VotesTypes.ToList();
 			PollStatusList = _context.StatusTypes.ToList();
 			CurrentPollQuestions = _context.Questions.Where(x => x.PolleId == pollId).Select(x => x).ToList();
+			statusName = PollStatusList.Find(x => x.Id == _context.Polles.Find(this.pollId).StatusId).StatusName;
 		}
 
 		public int pollId;
+		public string statusName;
 		public List<VoteModel> AllVotes { get; set; }
 		public List<VotesTypesModel> VotesTypes { get; set; }
 		public List<QuestionModel> CurrentPollQuestions { get; set; }

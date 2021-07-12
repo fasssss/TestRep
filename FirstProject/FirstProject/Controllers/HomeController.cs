@@ -74,18 +74,25 @@ namespace FirstProject.Controllers
 				return View(new PollesViewModel(_context, user, pollId));
 			}
 
-			if (status == _context.StatusTypes.Where(x => x.StatusName == "Stopped").Select(x => x.Id).ToList().First())
-			{
-				return View("PollSummarizing", new SummarizingViewModel(_context, pollId));
-			}
-
-			return View(new PollesViewModel(_context, user, pollId));
+			return View("PollSummarizing", new SummarizingViewModel(_context, pollId));
 		}
 
 		[HttpPost]
 		public IActionResult History()
 		{
 			return View(new HistoryViewModel { PollsHistoryList = _context.PollsHistory.Include(x => x.Votes).ToList() });
+		}
+
+		[HttpPost]
+		public IActionResult HistoryCleaner()
+		{
+			foreach (var historyPoll in _context.PollsHistory)
+			{
+				_context.Remove(historyPoll);
+			}
+
+			_context.SaveChanges();
+			return View("History", new HistoryViewModel { PollsHistoryList = _context.PollsHistory.Include(x => x.Votes).ToList() });
 		}
 
 		public IActionResult PollesList()
@@ -101,7 +108,7 @@ namespace FirstProject.Controllers
 		public async Task<IActionResult> PollChangeState(int statusTypeId, int pollId)
 		{
 			if (_context.StatusTypes.Find(statusTypeId).StatusName == "Stopped"
-				&& _context.StatusTypes.Find(statusTypeId).StatusName == "Opened")
+				|| _context.StatusTypes.Find(statusTypeId).StatusName == "Opened")
 			{
 				_context.Polles.Find(pollId).StatusId = statusTypeId;
 				await _context.SaveChangesAsync();
@@ -138,6 +145,7 @@ namespace FirstProject.Controllers
 						new VotesHistoryModel { VoteSummary = amount, PollHistoryId = lastPollInHistory.Id, VoteName = type.VoteName});
 				}
 
+				_context.Polles.Find(pollId).StatusId = statusTypeId;
 				await _context.SaveChangesAsync();
 			}
 

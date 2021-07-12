@@ -10,10 +10,10 @@
 			<ol>
 				@for (int i = 0; i < Model.CurrentQuestions.Count; i++)
 				{
-					<li class="border border-dark m-1 p-1" style="background-color:lightgray; border-radius: 0.5em">
+					<li class="border border-dark m-1 p-1" style="background-color:aliceblue; border-radius: 0.5em">
 						<div class="btn-group-vertical m-2 p-2">
 							<input hidden="hidden" name="questionsId" value="@Model.CurrentQuestions[i].Id">
-							<textarea cols="150" rows="10" name="questionsText" value="@Model.CurrentQuestions[i].Question">@Model.CurrentQuestions[i].Question</textarea>
+							<textarea class="form-control" style="border-radius: 0.5em" cols="150" rows="10" name="questionsText" value="@Model.CurrentQuestions[i].Question">@Model.CurrentQuestions[i].Question</textarea>
 							<br>
 							<input type="file" form="file-uploading" name="uploadedFile" />
 							<input hidden="hidden" type="number" form="file-uploading" name="questionId" value="@Model.CurrentQuestions[i].Id" />
@@ -24,17 +24,17 @@
 					</li>
 				}
 			</ol>
-			<button class="float-right" style="border-radius: 5em" type="submit" name="action" value="change">Submit</button>
+			<button class="btn btn-primary float-right" style="border-radius: 0.5em" type="submit" name="action" value="change">Submit</button>
 		</form>
 		}
 		<br>
 		<br>
 		<form method="post" asp-controller="Home" asp-action="PollSaveChanges" asp-route-pollId="@Model.PollId">
 			<div style="text-align: center">
-				<textarea cols="120" rows="10" name="questionsText"></textarea>
+				<textarea class="form-control" style="border-radius: 0.5em" cols="120" rows="10" name="questionsText"></textarea>
 			</div>
 			<div style="text-align: center">
-				<button class="bg-success btn-sm" name="action" value="add">Add new poll</button>
+				<button class="btn btn-primary mt-1" style="border-radius: 0.5em" name="action" value="add">Add new question</button>
 			</div>
 		</form>
 

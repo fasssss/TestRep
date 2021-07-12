@@ -15,11 +15,11 @@
 		if (Model.Votes.Find(x =>
 		x.QuestionId == Model.Question.Id && x.UserId == Model.User.Id && x.VoteTypeId == voteType.Id) != null)
 		{
-			<input style="background-color:forestgreen" type='button' id="@voteType.Id@Model.Question.Id" value='@voteType.VoteName' />
+			<input class="btn btn-primary" style="border-radius: 0.5em" type='button' id="@voteType.Id@Model.Question.Id" value='@voteType.VoteName' />
 		}
 		else
 		{
-			<input type='button' id="@voteType.Id" value='@voteType.VoteName' />
+			<input class="bg-white btn border-dark" style="border-radius: 0.5em" type='button' id="@voteType.Id" value='@voteType.VoteName' />
 		}
 
 <script type="text/javascript">

@@ -9,23 +9,23 @@
 	{
 		if (user.Role == "Administrator")
 		{
-			<li class="border m-2 p-2 text-black-50">
+			<li class="border m-3 pb-4 pt-2 pr-1 pl-1 text-black-50" style="border-radius:0.5em">
 				<form>
-					<button type="button" class="float-right text-black-50">DELETE</button>
+					<button class="btn float-right" style="border-radius:0.5em; background-color:lightgray; color:black;" type="button">DELETE</button>
 				</form>
 				@user.ToString()
 			</li>
 		}
 		else
 		{
-			<li class="border m-2 p-2">
+			<li class="border m-3 pb-4 pt-2 pr-1 pl-1" style="border-radius:0.5em">
 				<div class="nav float-right">
 					<form method="post" asp-controller="Home" asp-action="AdministratorsModeration" asp-route-userName="@user.UserName">
 						@*<input name="userName" value="@user.UserName" hidden="hidden" />*@
-						<select name="role" asp-items="@(new SelectList(Model.RoleList))" oninput="this.form.submit();">
+						<select style="border-radius:0.5em" name="role" asp-items="@(new SelectList(Model.RoleList))" oninput="this.form.submit();">
 							<option hidden="hidden" selected="selected" disabled="disabled">Change Role?</option>
 						</select>
-						<button type="submit" name="action" value="Delete" class="bg-danger">DELETE</button>
+						<button class="btn" style="border-radius:0.5em; background-color:black; color:white;" type="submit" name="action" value="Delete">DELETE</button>
 					</form>
 				</div>
 				@user.ToString()

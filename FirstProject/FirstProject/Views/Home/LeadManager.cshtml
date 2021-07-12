@@ -18,7 +18,7 @@
 			<li class="border m-2 p-2">
 				<div class="nav float-right">
 					<form method="post" asp-controller="Home" asp-action="LeadManagersModeration" asp-route-userName="@user.UserName">
-						<select name="role" asp-items="@(new SelectList(Model.RoleList))" oninput="this.form.submit();">
+						<select style="border-radius:0.5em" name="role" asp-items="@(new SelectList(Model.RoleList))" oninput="this.form.submit();">
 							<option hidden="hidden" selected="selected" disabled="disabled">Change Role?</option>
 						</select>
 					</form>
@@ -39,12 +39,12 @@
 			<li class="border m-2 p-2">
 				<div class="nav float-right">
 					<form method="post" asp-controller="Home" asp-action="LeadManagersModeration" asp-route-userName="@user.UserName">
-						<select name="role" asp-items="@(new SelectList(Model.RoleList))" oninput="this.form.submit();">
+						<select style="border-radius:0.5em" name="role" asp-items="@(new SelectList(Model.RoleList))" oninput="this.form.submit();">
 							<option hidden="hidden" selected="selected" disabled="disabled">Change Role?</option>
 						</select>
 					</form>
 					<form method="post" asp-controller="Home" asp-action="InspectingUserFiles" asp-route-path="/UserFiles/@user.UserName/">
-						<select name="fileName" asp-items="@(new SelectList(filesName))" oninput="this.form.submit();">
+						<select style="border-radius:0.5em" name="fileName" asp-items="@(new SelectList(filesName))" oninput="this.form.submit();">
 							<option hidden="hidden" selected="selected" disabled="disabled">Uploaded Files</option>
 						</select>
 					</form>

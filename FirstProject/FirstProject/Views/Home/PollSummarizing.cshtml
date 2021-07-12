@@ -4,7 +4,7 @@
 <hr>
 <h2>Questions</h2>
 <ol>
-	@foreach(var question in Model.CurrentPollQuestions)
+	@foreach (var question in Model.CurrentPollQuestions)
 	{
 		<li class="border border-dark m-2 p-1" style="border-radius: 0.5em">
 			<p><b>Description: </b>@question.Question</p>
@@ -15,12 +15,19 @@
 </ol>
 @if (User.IsInRole("LeadManager"))
 {
-	<form method="post" asp-controller="Home" asp-action="PollChangeState" asp-route-pollId="@Model.pollId">
-	<div class="text-center">
-	@foreach (var statusType in Model.PollStatusList)
+	if (Model.statusName == "Closed")
 	{
-		<button name="statusTypeId" value="@statusType.Id">@statusType.StatusName</button>
+		<h6 class="alert-success text-center p-2" style="border-radius: 0.5em">This poll was closed, now you can remove it from polls list.</h6>
 	}
-	</div>
-	</form>
+	else
+	{
+		<form method="post" asp-controller="Home" asp-action="PollChangeState" asp-route-pollId="@Model.pollId">
+			<div class="text-center">
+				@foreach (var statusType in Model.PollStatusList)
+				{
+					<button class="bg-white" style="border-radius: 0.5em" name="statusTypeId" value="@statusType.Id">@statusType.StatusName</button>
+				}
+			</div>
+		</form>
+	}
 }

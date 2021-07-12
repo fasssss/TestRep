@@ -1,19 +1,34 @@
 ﻿@model HistoryViewModel
+
+@if (User.IsInRole("LeadManager"))
+{
+	<form method="post" asp-controller="Home" asp-action="HistoryCleaner">
+		<button class="btn float-right" style="border-radius:0.5em; background-color:black; color:white" type="submit">Clean</button>
+	</form>
+}
 <h1>Polls history</h1>
-<ol>
-	@foreach (var poll in Model.PollsHistoryList)
-	{
-		<li class="border border-dark m-2 p-1" style="border-radius: 0.5em">
+
+@if (Model.PollsHistoryList.Count > 0)
+{
+	<ol>
+		@foreach (var poll in Model.PollsHistoryList)
+		{
+			<li class="border border-dark m-2 p-1" style="border-radius: 0.5em">
 				<div style="text-align:left">
 					<b>Description:</b> @poll.PollName
-				<span class="float-right">
-					@foreach (var votes in poll.Votes.ToList())
-					{
-						<b> | @votes.VoteName = @votes.VoteSummary</b>
-					}
-					<b> |</b>
-				</span>
+					<span class="float-right">
+						@foreach (var votes in poll.Votes.ToList())
+						{
+							<b> | @votes.VoteName = @votes.VoteSummary</b>
+						}
+						<b> |</b>
+					</span>
 				</div>
-		</li>
-	}
-</ol>
+			</li>
+		}
+	</ol>
+}
+else
+{
+	<h4 class="alert-success text-center p-2" style="border-radius: 0.5em">There is Empty :)</h4>
+}
