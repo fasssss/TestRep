@@ -1,5 +1,5 @@
 ﻿@model PollesViewModel
-
+<script>var dict = {};</script>
 <h1>Polles Page</h1>
 <hr>
 <h2>Questions</h2>
@@ -18,3 +18,19 @@
 			</li>
 		}
 	</ol>
+	<script type="text/javascript">
+		const hubConnection = new signalR.HubConnectionBuilder()
+			.withUrl("/update")
+			.build();
+
+		hubConnection.start();
+
+		hubConnection.on("UpdatePollStatus", function (data) {
+			if (data == "Opened") {
+				window.location.href = '@Url.Action("OpenedPoll", "Home")?pollId=' + '@Model.PollId';
+			}
+			else {
+				window.location.href = '@Url.Action("PollSummarizing", "Home")?pollId=' + '@Model.PollId';
+			}
+		});
+	</script>

@@ -1,0 +1,28 @@
+﻿<div class="mt-1 pt-1" id="chatroom">
+	<textarea id="textBox" cols="70" rows="25" disabled="disabled"></textarea>
+</div>
+<div id="inputForm">
+	<input type="text" id="message" size="60" />
+	<input type="button" id="sendBtn" value="Send" />
+</div>
+<script src="~/js/signalr/dist/browser/signalr.min.js"></script>
+<script>
+        const hubConnection = new signalR.HubConnectionBuilder()
+            .withUrl("/chat")
+            .build();
+
+        hubConnection.on("Send", function (data) {
+
+			let elem = document.getElementById("textBox");
+            elem.value += data + '\n';
+
+        });
+
+         document.getElementById("sendBtn").addEventListener("click", function (e) {
+            let message = "@User.Identity.Name" + ": " + document.getElementById("message").value;
+            hubConnection.invoke("Send", message);
+            document.getElementById("message").value = "";
+         });
+
+        hubConnection.start();
+</script>

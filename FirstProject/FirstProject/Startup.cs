@@ -1,28 +1,12 @@
 using FirstProject.Data;
-using FirstProject.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication.OpenIdConnect;
-using Microsoft.Identity.Web;
-using Microsoft.Identity.Web.UI;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Authentication.MicrosoftAccount;
-using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Options;
-using System.Globalization;
-using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc.Razor;
+using FirstProject.SignalRHubs;
 
 namespace FirstProject
 {
@@ -38,6 +22,7 @@ namespace FirstProject
 		// This method gets called by the runtime. Use this method to add services to the container.
 		public void ConfigureServices(IServiceCollection services)
 		{
+			services.AddSignalR();
 			services.AddLocalization(options => options.ResourcesPath = "Resources");
 			services.AddMvc()
 				.AddViewLocalization(LanguageViewLocationExpanderFormat.Suffix);
@@ -85,6 +70,8 @@ namespace FirstProject
 					name: "default",
 					pattern: "{controller=Home}/{action=Index}/{id?}");
 				endpoints.MapRazorPages();
+				endpoints.MapHub<UpdateHub>("/update");
+				endpoints.MapHub<ChatHub>("/chat");
 			});
 		}
 	}

@@ -6,7 +6,7 @@
 @if (Model.CurrentQuestions?.Count > 0)
 {
 	<form id="file-uploading" asp-action="AddFileToDB" asp-controller="Home" method="post" enctype="multipart/form-data"></form>
-		<form method="post" asp-controller="Home" asp-action="PollSaveChanges" asp-route-pollId="@Model.PollId">
+		<form method="post" asp-controller="Home" asp-action="PollSaveChanges" asp-route-pollId="@Model.PollId" enctype="multipart/form-data">
 			<ol>
 				@for (int i = 0; i < Model.CurrentQuestions.Count; i++)
 				{
@@ -15,10 +15,9 @@
 							<input hidden="hidden" name="questionsId" value="@Model.CurrentQuestions[i].Id">
 							<textarea class="form-control" style="border-radius: 0.5em" cols="150" rows="10" name="questionsText" value="@Model.CurrentQuestions[i].Question">@Model.CurrentQuestions[i].Question</textarea>
 							<br>
-							<input type="file" form="file-uploading" name="uploadedFile" />
-							<input hidden="hidden" type="number" form="file-uploading" name="questionId" value="@Model.CurrentQuestions[i].Id" />
+							<input type="file" name="uploadedFiles" />
+							<input hidden="hidden" type="number" name="questionIdForFiles" value="@Model.CurrentQuestions[i].Id" />
 							<br>
-							<input type="submit" form="file-uploading" value="Upload" />
 							<a class="text-danger">Warning! Save changes before you leave eather you will lose your changes</a>
 						</div>
 					</li>

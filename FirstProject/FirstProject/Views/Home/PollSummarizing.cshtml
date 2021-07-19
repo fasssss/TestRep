@@ -9,7 +9,7 @@
 		<li class="border border-dark m-2 p-1" style="border-radius: 0.5em">
 			<p><b>Description: </b>@question.Question</p>
 			<hr>
-			<p class="text-center">@Model.QuestionSummarizing(question)<p>
+			<p class="text-center @question.Id">@Model.QuestionSummarizing(question)<p>
 		</li>
 	}
 </ol>
@@ -30,4 +30,53 @@
 			</div>
 		</form>
 	}
+}
+
+<script src="~/js/signalr/dist/browser/signalr.min.js"></script>
+<script type="text/javascript">
+	const hubConnection = new signalR.HubConnectionBuilder()
+		.withUrl("/update")
+		.build();
+
+	hubConnection.on("Send", function (data) {
+		let argsArray = data.split(" ");
+		let elem = document.getElementsByClassName(argsArray[0])[0].textContent;
+		let splittedElem = elem.split(" ");
+		for (let i = 0; i < splittedElem.length; i++) {
+			if (splittedElem[i] == argsArray[1]) {
+				splittedElem[i + 2] = parseInt(splittedElem[i + 2]) - 1;
+			}
+
+			if (splittedElem[i] == argsArray[2]) {
+				splittedElem[i + 2] = parseInt(splittedElem[i + 2]) + 1;
+			}
+		}
+		document.getElementsByClassName(argsArray[0])[0].textContent = splittedElem.join(" ");
+	});
+
+	hubConnection.start();
+</script>
+@if (User.IsInRole("LeadManager"))
+{
+	<script type="text/javascript">
+		let buttonsCount = document.getElementsByName("statusTypeId").length
+		for (let i = 0; i < buttonsCount; i++) {
+			document.getElementsByName("statusTypeId")[i].addEventListener("click", function (e) {
+				hubConnection.invoke("UpdatePollStatus", this.textContent.toString());
+			})
+		}
+	</script>
+}
+else
+{
+<script type="text/javascript">
+		hubConnection.on("UpdatePollStatus", function (data) {
+			if (data == "Opened") {
+				window.location.href = '@Url.Action("OpenedPoll", "Home")?pollId=' + '@Model.pollId';
+			}
+			else {
+				window.location.href = '@Url.Action("PollSummarizing", "Home")?pollId=' + '@Model.pollId';
+			}
+			});
+</script>
 }

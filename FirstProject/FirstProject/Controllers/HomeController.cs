@@ -52,28 +52,43 @@ namespace FirstProject.Controllers
 		public async Task<IActionResult> Voting(int questionId, int voteType)
 		{
 			var user = await _userManager.GetUserAsync(User);
-			if (_context.Votes.Find(questionId, user.Id) != null)
+			var pollId = _context.Questions.Where(x => x.Id == questionId).Select(x => x)?.First()?.PolleId;
+			var actualPoll = _context.Polles.Find(pollId);
+			var actualStatusName = _context.StatusTypes.Find(actualPoll.StatusId);
+			if (actualStatusName.StatusName == "Opened")
 			{
-				_context.Votes.Remove(_context.Votes.Find(questionId, user.Id));
+				if (_context.Votes.Find(questionId, user.Id) != null)
+				{
+					_context.Votes.Remove(_context.Votes.Find(questionId, user.Id));
+				}
+				_context.Votes.Add(new VoteModel { UserId = user.Id, QuestionId = questionId, VoteTypeId = voteType });
+				_context.SaveChanges();
 			}
-			_context.Votes.Add(new VoteModel { UserId = user.Id, QuestionId = questionId, VoteTypeId = voteType });
-			_context.SaveChanges();
 
 			return PartialView("QuestionPartial"
-				, new QuestionViewModel 
-				{ Question = _context.Questions.Find(questionId), User = user, Votes = _context.Votes.ToList(), VotesTypes = _context.VotesTypes.ToList() });
+					, new QuestionViewModel
+					{ Question = _context.Questions.Find(questionId), User = user, Votes = _context.Votes.ToList(), VotesTypes = _context.VotesTypes.ToList() });
 		}
 
 		public async Task<IActionResult> Poll(int pollId)
 		{
-			int Id = pollId;
-			var user = await _userManager.GetUserAsync(User);
 			int status = _context.Polles.Find(pollId).StatusId;
 			if (status == _context.StatusTypes.Where(x => x.StatusName == "Opened").Select(x => x.Id).ToList().First())
 			{
-				return View(new PollesViewModel(_context, user, pollId));
+				return await OpenedPollAsync(pollId);
 			}
 
+			return PollSummarizing(pollId);
+		}
+
+		public async Task<IActionResult> OpenedPollAsync(int pollId)
+		{
+			var user = await _userManager.GetUserAsync(User);
+			return View("Poll", new PollesViewModel(_context, user, pollId));
+		}
+
+		public IActionResult PollSummarizing(int pollId)
+		{
 			return View("PollSummarizing", new SummarizingViewModel(_context, pollId));
 		}
 
@@ -184,10 +199,14 @@ namespace FirstProject.Controllers
 		}
 
 		public IActionResult PollSaveChanges(int? pollId, ICollection<string> questionsText
-			, string action, ICollection<int> questionsId = null)
+			, string action, ICollection<int> questionsId = null
+			, ICollection<IFormFile> uploadedFiles = null
+			, ICollection<int> questionIdForFiles = null)
 		{
 			var questionIdList = questionsId.ToList();
 			var questionTextList = questionsText.ToList();
+			var questionIdForFilesList = questionIdForFiles.ToList();
+			var uploadedFilesList = uploadedFiles.ToList();
 			if (action == "change")
 			{
 				for (int i = 0; i < questionsId.Count; i++)
@@ -208,6 +227,11 @@ namespace FirstProject.Controllers
 					{
 						_context.Questions.Find(questionIdList[i]).Question = questionTextList[i];
 					}
+				}
+
+				for(int i = 0; i < questionIdForFilesList.Count; i++)
+				{
+					AddFileToDB(uploadedFilesList[i], questionIdForFilesList[i]);
 				}
 			}
 
@@ -251,7 +275,7 @@ namespace FirstProject.Controllers
 							}
 						case "RepresentativeAuthority":
 							{
-								return View("RepresentativeAuthority", new UserAdministrationViewModel(_userManager, _roleManager));
+								return View("RepresentativeAuthority", new UserAdministrationViewModel(_userManager, _roleManager, _context));
 							}
 					}
 				}
@@ -343,8 +367,7 @@ namespace FirstProject.Controllers
 			return RedirectToAction("RoleCapabilities");
 		}
 
-		[HttpPost]
-		public IActionResult AddFileToDB(IFormFile uploadedFile, int questionId)
+		public void AddFileToDB(IFormFile uploadedFile, int questionId)
 		{
 			if (_context.Questions.Find(questionId).FileId != null)
 			{
@@ -367,8 +390,6 @@ namespace FirstProject.Controllers
 				_context.Questions.Find(questionId).FileId = id;
 				_context.SaveChanges();
 			}
-
-			return View("PollAddingChangingPage", new PollesViewModel(_context, _context.Questions.Find(questionId).PolleId));
 		}
 
 		[HttpPost]

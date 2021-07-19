@@ -2,14 +2,6 @@
 @inject IViewLocalizer Localizer
 
 <!DOCTYPE html>
-
-<style>
-	body {
-		background: url("/images/back.jpg") left no-repeat fixed
-			,url("/images/back.jpg") right no-repeat fixed;
-	}
-</style>
-
 <html lang="en">
 <head>
 	<meta charset="utf-8" />
@@ -20,12 +12,16 @@
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Oswald&display=swap" rel="stylesheet">
+	<script type="text/javascript" src="https://vk.com/js/api/openapi.js?169"></script>
+	<script type="text/javascript">
+		VK.init({ apiId: 7906577, onlyWidgets: true });
+	</script>
 </head>
 <body style="font-family: 'Oswald', sans-serif;">
 	<header>
 		<nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
 			<div class="container">
-				<a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index"><img src="~/logoBird.jpg"/></a>
+				<a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index"><img src="~/logoBird.jpg" /></a>
 				<button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
 						aria-expanded="false" aria-label="Toggle navigation">
 					<span class="navbar-toggler-icon"></span>
@@ -38,7 +34,7 @@
 						</li>
 						<li class="nav-item">
 							<a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">@Localizer["Privacy"]</a>
-</li>
+						</li>
 					</ul>
 				</div>
 			</div>
@@ -49,7 +45,10 @@
 			@RenderBody()
 		</main>
 	</div>
-
+	<div id="vk_comments"></div>
+	<script type="text/javascript">
+		VK.Widgets.Comments("vk_comments", { limit: 10, attach: "*" });
+	</script>
 	<footer class="border-top footer text-muted">
 		<div class="container">
 			&copy; 2021 - FirstProject - <a asp-area="" asp-controller="Home" asp-action="Privacy">@Localizer["Privacy"]</a>
@@ -58,6 +57,7 @@
 	<script src="~/lib/jquery/dist/jquery.min.js"></script>
 	<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 	<script src="~/js/site.js" asp-append-version="true"></script>
+	<script src="~/js/signalr/dist/browser/signalr.min.js"></script>
 	@RenderSection("Scripts", required: false)
 </body>
 </html>

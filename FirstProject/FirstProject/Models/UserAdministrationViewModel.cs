@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,6 +32,14 @@ namespace FirstProject.Models
 			RoleList.Add(new IdentityRole<System.Guid>("Guest"));
 		}
 
+		public UserAdministrationViewModel(UserManager<ExtendedUserModel> userManager,
+		RoleManager<IdentityRole<System.Guid>> roleManager, 
+		FirstProject.Data.FirstProjectContext context) : this(userManager, roleManager)
+		{
+			AuthorityDependencies = context.AuthorityDependencies
+				.Include(x => x.AuthorityModel).Include(x => x.RepresentativeAuthorityModel).ToList();
+		}
+
 		private async Task<IList<string>> GetRole(ExtendedUserModel user)
 		{
 			var a = await _userManager.GetRolesAsync(user);
@@ -58,6 +67,7 @@ namespace FirstProject.Models
 
 		public List<UserPresentation> UserList { get; set; }
 		public List<IdentityRole<System.Guid>> RoleList { get; set; }
+		public List<AuthorityDependenciesModel> AuthorityDependencies { get; set; }
 
 		public class UserPresentation
 		{

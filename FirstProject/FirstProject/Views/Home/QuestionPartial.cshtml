@@ -15,21 +15,34 @@
 		if (Model.Votes.Find(x =>
 		x.QuestionId == Model.Question.Id && x.UserId == Model.User.Id && x.VoteTypeId == voteType.Id) != null)
 		{
-			<input class="btn btn-primary" style="border-radius: 0.5em" type='button' id="@voteType.Id@Model.Question.Id" value='@voteType.VoteName' />
+			<input class="btn btn-primary @voteType.Id" style="border-radius: 0.5em" type='button' id="" value='@voteType.VoteName' />
 		}
 		else
 		{
-			<input class="bg-white btn border-dark" style="border-radius: 0.5em" type='button' id="@voteType.Id" value='@voteType.VoteName' />
+			<input class="bg-white btn border-dark @voteType.Id" style="border-radius: 0.5em" type='button' value='@voteType.VoteName' />
 		}
 
-<script type="text/javascript">
+		<script src="~/js/signalr/dist/browser/signalr.min.js"></script>
+		<script type="text/javascript">
 
-			$(document).ready(function () {
-				$('#@Model.Question.Id #@voteType.Id').click(function (e) {
-					e.preventDefault();
-						$('#@Model.Question.Id').load('@Url.Action("Voting", "Home")?questionId=' + '@Model.Question.Id' + '&voteType=' + '@voteType.Id')
-					});
-				});
-</script>
+		$(document).ready(function () {
+			$('#@Model.Question.Id .@voteType.Id').click(function (e) {
+				e.preventDefault();
+					$('#@Model.Question.Id').load('@Url.Action("Voting", "Home")?questionId=' + '@Model.Question.Id' + '&voteType=' + '@voteType.Id')
+			});
+		});
+		</script>
+		<script type="text/javascript">
+			document.getElementById("@Model.Question.Id").getElementsByClassName("@voteType.Id")[0].addEventListener("click", function (e) {
+				hubConnection.invoke("Send", "@Model.Question.Id " + dict["@Model.Question.Id"].toString() + " @voteType.VoteName");
+		})
+		</script>
 	}
 </div>
+<script type="text/javascript">
+	dict["@Model.Question.Id"] = document.getElementById("@Model.Question.Id").getElementsByClassName("btn-primary")[0].value;
+	if (dict["@Model.Question.Id"] == null)
+	{
+		dict["@Model.Question.Id"] = "-";
+	}
+</script>

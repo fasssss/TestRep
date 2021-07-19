@@ -1,7 +1,15 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+	ViewData["Title"] = "Home Page";
 }
 
 <div class="text-center">
-    <h1 class="display-4">@ViewData["Welcome"]</h1>
+	<h1 class="display-4">@ViewData["Welcome"]</h1>
 </div>
+<aside>
+	@if (User.Identity.IsAuthenticated)
+	{
+		<div class="ml-1 pl-1 text-center">
+			<partial name="ChatPartial" />
+		</div>
+	}
+</aside>
