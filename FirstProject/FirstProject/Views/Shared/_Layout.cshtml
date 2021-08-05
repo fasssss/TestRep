@@ -12,10 +12,10 @@
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Oswald&display=swap" rel="stylesheet">
-	<script type="text/javascript" src="https://vk.com/js/api/openapi.js?169"></script>
+	@*<script type="text/javascript" src="https://vk.com/js/api/openapi.js?169"></script>
 	<script type="text/javascript">
 		VK.init({ apiId: 7906577, onlyWidgets: true });
-	</script>
+	</script>*@
 </head>
 <body style="font-family: 'Oswald', sans-serif;">
 	<header>
@@ -45,10 +45,18 @@
 			@RenderBody()
 		</main>
 	</div>
-	<div id="vk_comments"></div>
-	<script type="text/javascript">
-		VK.Widgets.Comments("vk_comments", { limit: 10, attach: "*" });
-	</script>
+	<div id="fb-root"></div>
+	<script async defer crossorigin="anonymous" src="https://connect.facebook.net/ru_RU/sdk.js#xfbml=1&version=v11.0" nonce="2grCb2nB"></script>
+	@if (!Context.Request.Path.ToString().Contains("/Identity"))
+	{
+		<div class="text-center mt-5 pt-5">
+			<div class="fb-comments" data-href="https://localhost:44330" data-width="" data-numposts="5"></div>
+		</div>
+	}
+	@*<div id="vk_comments"></div>
+		<script type="text/javascript">
+			VK.Widgets.Comments("vk_comments", { limit: 10, attach: "*" });
+		</script>*@
 	<footer class="border-top footer text-muted">
 		<div class="container">
 			&copy; 2021 - FirstProject - <a asp-area="" asp-controller="Home" asp-action="Privacy">@Localizer["Privacy"]</a>
