@@ -7,6 +7,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Mvc.Razor;
 using FirstProject.SignalRHubs;
+using FirstProject.Services;
 
 namespace FirstProject
 {
@@ -34,11 +35,18 @@ namespace FirstProject
 				microsoftOptions.ClientSecret = Configuration["Authentication:Microsoft:ClientSecret"];
 				microsoftOptions.CallbackPath = "/signin-microsoft";
 			});
+
+			services.AddScoped<PollsService>();
+			services.AddScoped<RollesService>();
+			services.AddScoped<ChatService>();
+			services.AddScoped<PrivateInfoService>();
+			services.AddScoped<CultureService>();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
 		public void Configure(IApplicationBuilder app, IWebHostEnvironment env, FirstProjectContext context)
 		{
+			//ChatService chat = new ChatService();
 			if (env.IsDevelopment())
 			{
 				app.UseDeveloperExceptionPage();
