@@ -29,6 +29,7 @@ namespace FirstProject.Data
         public DbSet<VotesTypesModel> VotesTypes { get; set; }
         public DbSet<FileInDbModel> FilesInDb { get; set; }
         public DbSet<StatusTypesModel> StatusTypes { get; set; }
+        public DbSet<ChatHistoryModel> ChatHistory { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);

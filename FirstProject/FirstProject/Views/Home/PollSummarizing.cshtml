@@ -62,7 +62,7 @@
 		let buttonsCount = document.getElementsByName("statusTypeId").length
 		for (let i = 0; i < buttonsCount; i++) {
 			document.getElementsByName("statusTypeId")[i].addEventListener("click", function (e) {
-				hubConnection.invoke("UpdatePollStatus", this.textContent.toString());
+				hubConnection.invoke("UpdatePollStatus", this.textContent.toString() + " " + @Model.pollId.ToString());
 			})
 		}
 	</script>
@@ -71,11 +71,15 @@ else
 {
 <script type="text/javascript">
 		hubConnection.on("UpdatePollStatus", function (data) {
-			if (data == "Opened") {
-				window.location.href = '@Url.Action("OpenedPoll", "Home")?pollId=' + '@Model.pollId';
-			}
-			else {
-				window.location.href = '@Url.Action("PollSummarizing", "Home")?pollId=' + '@Model.pollId';
+			let status = data.toString().split(" ")[0];
+			let pollId = data.toString().split(" ")[1];
+			if (pollId == @Model.pollId.ToString()) {
+				if (status == "Opened") {
+					window.location.href = '@Url.Action("OpenedPoll", "Home")?pollId=' + '@Model.pollId';
+				}
+				else {
+					window.location.href = '@Url.Action("PollSummarizing", "Home")?pollId=' + '@Model.pollId';
+				}
 			}
 			});
 </script>

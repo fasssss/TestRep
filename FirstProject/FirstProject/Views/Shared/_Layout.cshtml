@@ -8,14 +8,15 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<title>@ViewData["Title"] - FirstProject</title>
 	<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+	<link rel="stylesheet" href="~/lib/animate.css/animate.compat.css" />
 	<link rel="stylesheet" href="~/css/site.css" />
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Oswald&display=swap" rel="stylesheet">
 	@*<script type="text/javascript" src="https://vk.com/js/api/openapi.js?169"></script>
-	<script type="text/javascript">
-		VK.init({ apiId: 7906577, onlyWidgets: true });
-	</script>*@
+		<script type="text/javascript">
+			VK.init({ apiId: 7906577, onlyWidgets: true });
+		</script>*@
 </head>
 <body style="font-family: 'Oswald', sans-serif;">
 	<header>
@@ -64,8 +65,10 @@
 	</footer>
 	<script src="~/lib/jquery/dist/jquery.min.js"></script>
 	<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-	<script src="~/js/site.js" asp-append-version="true"></script>
 	<script src="~/js/signalr/dist/browser/signalr.min.js"></script>
+	<script src="~/lib/remarkable-bootstrap-notify/dist/bootstrap-notify.min.js"></script>
+	<script src="~/js/site.js"></script>
+	<script src="~/js/updatingScript.js"></script>
 	@RenderSection("Scripts", required: false)
 </body>
 </html>

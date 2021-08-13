@@ -34,6 +34,26 @@ namespace FirstProject.Migrations
                     b.ToTable("AuthorityDependencies");
                 });
 
+            modelBuilder.Entity("FirstProject.Models.ChatHistoryModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Message")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("UserID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserID");
+
+                    b.ToTable("ChatHistory");
+                });
+
             modelBuilder.Entity("FirstProject.Models.ExtendedUserModel", b =>
                 {
                     b.Property<Guid>("Id")
@@ -464,6 +484,15 @@ namespace FirstProject.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("FirstProject.Models.ChatHistoryModel", b =>
+                {
+                    b.HasOne("FirstProject.Models.ExtendedUserModel", "ExtendedUserModel")
+                        .WithMany()
+                        .HasForeignKey("UserID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("FirstProject.Models.ExtendedUserModel", b =>
                 {
                     b.HasOne("FirstProject.Models.LocaleModel", "LocaleModel")
@@ -531,7 +560,7 @@ namespace FirstProject.Migrations
             modelBuilder.Entity("FirstProject.Models.VotesHistoryModel", b =>
                 {
                     b.HasOne("FirstProject.Models.PollsHistoryModel", "PollHistory")
-                        .WithMany()
+                        .WithMany("Votes")
                         .HasForeignKey("PollHistoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

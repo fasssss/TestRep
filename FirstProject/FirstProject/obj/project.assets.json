@@ -68,6 +68,9 @@
           "lib/netstandard2.0/Azure.Security.KeyVault.Secrets.dll": {}
         }
       },
+      "bootstrap/2.3.2": {
+        "type": "package"
+      },
       "jQuery/1.8.0": {
         "type": "package"
       },
@@ -1197,6 +1200,12 @@
         },
         "runtime": {
           "lib/netstandard1.6/NuGet.Frameworks.dll": {}
+        }
+      },
+      "remarkable-bootstrap-notify/3.1.3": {
+        "type": "package",
+        "dependencies": {
+          "bootstrap": "2.3.2"
         }
       },
       "runtime.debian.8-x64.runtime.native.System.Security.Cryptography.OpenSsl/4.3.0": {
@@ -2701,6 +2710,25 @@
         "lib/netstandard2.0/Azure.Security.KeyVault.Secrets.dll",
         "lib/netstandard2.0/Azure.Security.KeyVault.Secrets.xml",
         "pkgicon.png"
+      ]
+    },
+    "bootstrap/2.3.2": {
+      "sha512": "LF309o8BZa2IzBfQHeQmweAXSpGefltx0fSN/CXdyMpU1vvLFzd4OHkQ/blq3rGET3p3h4AxAc3SRKr35DiSSw==",
+      "type": "package",
+      "path": "bootstrap/2.3.2",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "Content/Content/bootstrap-responsive.css",
+        "Content/Content/bootstrap-responsive.min.css",
+        "Content/Content/bootstrap.css",
+        "Content/Content/bootstrap.min.css",
+        "Content/Scripts/bootstrap.js",
+        "Content/Scripts/bootstrap.min.js",
+        "Content/img/glyphicons-halflings-white.png",
+        "Content/img/glyphicons-halflings.png",
+        "bootstrap.2.3.2.nupkg.sha512",
+        "bootstrap.nuspec"
       ]
     },
     "jQuery/1.8.0": {
@@ -4599,6 +4627,19 @@
         "lib/netstandard1.6/NuGet.Frameworks.xml",
         "nuget.frameworks.4.7.0.nupkg.sha512",
         "nuget.frameworks.nuspec"
+      ]
+    },
+    "remarkable-bootstrap-notify/3.1.3": {
+      "sha512": "fzg/CRkw4kWrG6OW7flKJ6MUPv1SoijHAbehAin7kTyBqg3bRX3THWR5K++mz3jQVLfmFEvKJs+xxUPA5SRKoA==",
+      "type": "package",
+      "path": "remarkable-bootstrap-notify/3.1.3",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "content/Scripts/bootstrap-notify.js",
+        "content/Scripts/bootstrap-notify.min.js",
+        "remarkable-bootstrap-notify.3.1.3.nupkg.sha512",
+        "remarkable-bootstrap-notify.nuspec"
       ]
     },
     "runtime.debian.8-x64.runtime.native.System.Security.Cryptography.OpenSsl/4.3.0": {
@@ -8560,7 +8601,8 @@
       "Microsoft.Identity.Web.UI >= 1.10.0",
       "Microsoft.VisualStudio.Azure.Containers.Tools.Targets >= 1.10.13",
       "Microsoft.VisualStudio.Web.CodeGeneration.Design >= 3.1.5",
-      "Microsoft.jQuery.Unobtrusive.Ajax >= 3.2.6"
+      "Microsoft.jQuery.Unobtrusive.Ajax >= 3.2.6",
+      "remarkable-bootstrap-notify >= 3.1.3"
     ]
   },
   "packageFolders": {
@@ -8664,6 +8706,10 @@
           "Microsoft.jQuery.Unobtrusive.Ajax": {
             "target": "Package",
             "version": "[3.2.6, )"
+          },
+          "remarkable-bootstrap-notify": {
+            "target": "Package",
+            "version": "[3.1.3, )"
           }
         },
         "imports": [

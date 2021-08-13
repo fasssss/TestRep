@@ -19,7 +19,6 @@ namespace FirstProject.SignalRHubs
 
 		public async Task UpdatePollStatus(string message)
 		{
-			//Thread.Sleep(500);
 			await this.Clients.Others.SendAsync("UpdatePollStatus", message);
 		}
 	}

@@ -14,6 +14,9 @@ using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Hosting;
 using FirstProject.Services;
+using Microsoft.AspNetCore.SignalR;
+using FirstProject.SignalRHubs;
+using Microsoft.EntityFrameworkCore;
 
 namespace FirstProject.Controllers
 {
@@ -31,6 +34,7 @@ namespace FirstProject.Controllers
 		private readonly PollsService _pollsService;
 		private readonly PrivateInfoService _privateInfoService;
 		private readonly CultureService _cultureService;
+		private readonly IHubContext<ChatHub> _hubContext;
 
 
 		public HomeController(SignInManager<ExtendedUserModel> signInManager,
@@ -44,7 +48,8 @@ namespace FirstProject.Controllers
 			PollsService pollsService,
 			RollesService rollesService,
 			PrivateInfoService privateInfoService,
-			CultureService cultureService)
+			CultureService cultureService,
+			IHubContext<ChatHub> hubContext)
 		{
 			_roleManager = roleManager;
 			_localizer = localizer;
@@ -58,8 +63,18 @@ namespace FirstProject.Controllers
 			_rollesService = rollesService;
 			_privateInfoService = privateInfoService;
 			_cultureService = cultureService;
+			_hubContext = hubContext;
 		}
 
+		public string ChatLoading(int messageCount)
+		{
+			return _chatService.ChatLoading(messageCount);
+		}
+
+		public async Task Chatting(string message)
+		{
+			await _chatService.SendingMessageAsync(message, User);
+		}
 
 		public async Task<IActionResult> Voting(int questionId, int voteType)
 		{
@@ -249,7 +264,6 @@ namespace FirstProject.Controllers
 
 		public IActionResult Index()
 		{
-			ViewData["Welcome"] = _localizer["Welcome"];
 			return View();
 		}
 

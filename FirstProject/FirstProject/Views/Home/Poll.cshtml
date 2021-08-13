@@ -18,6 +18,7 @@
 			</li>
 		}
 	</ol>
+
 	<script type="text/javascript">
 		const hubConnection = new signalR.HubConnectionBuilder()
 			.withUrl("/update")
@@ -26,11 +27,15 @@
 		hubConnection.start();
 
 		hubConnection.on("UpdatePollStatus", function (data) {
-			if (data == "Opened") {
-				window.location.href = '@Url.Action("OpenedPoll", "Home")?pollId=' + '@Model.PollId';
-			}
-			else {
-				window.location.href = '@Url.Action("PollSummarizing", "Home")?pollId=' + '@Model.PollId';
+			let status = data.toString().split(" ")[0];
+			let pollId = data.toString().split(" ")[1];
+			if (pollId == @Model.PollId.ToString()) {
+				if (status == "Opened") {
+					window.location.href = '@Url.Action("OpenedPoll", "Home")?pollId=' + '@Model.PollId';
+				}
+				else {
+					window.location.href = '@Url.Action("PollSummarizing", "Home")?pollId=' + '@Model.PollId';
+				}
 			}
 		});
 	</script>

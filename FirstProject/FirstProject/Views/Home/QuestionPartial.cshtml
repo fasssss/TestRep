@@ -34,7 +34,8 @@
 		</script>
 		<script type="text/javascript">
 			document.getElementById("@Model.Question.Id").getElementsByClassName("@voteType.Id")[0].addEventListener("click", function (e) {
-				hubConnection.invoke("Send", "@Model.Question.Id " + dict["@Model.Question.Id"].toString() + " @voteType.VoteName");
+				hubConnection.invoke("Send"
+					, "@Model.Question.Id " + dict["@Model.Question.Id"].toString() + " @voteType.VoteName" + " @Model.User" + " @Model.Question.PolleModel.Description");
 		})
 		</script>
 	}
